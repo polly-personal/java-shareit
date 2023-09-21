@@ -1,8 +1,7 @@
-package ru.practicum.shareit.booking.dto;
+package ru.practicum.shareit.booking.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import ru.practicum.shareit.booking.model.CustomerReview;
 import ru.practicum.shareit.booking.constant.Status;
 
 import javax.validation.constraints.NotNull;
@@ -13,7 +12,7 @@ import java.time.LocalDateTime;
  */
 @AllArgsConstructor
 @Data
-public class BookingDto {
+public class Booking {
     private Long id;
 
     @NotNull(message = "поле \"start\" должно быть заполнено")
@@ -32,5 +31,4 @@ public class BookingDto {
     private Long ownerItem;
 
     private CustomerReview customerReview;
-
 }
