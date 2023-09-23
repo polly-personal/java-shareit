@@ -9,7 +9,6 @@ import ru.practicum.shareit.booking.model.CustomerReview;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.item.exception.OwnerIdIsNotLinkedToItemId;
-import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.exception.ThisUserAlreadyExistException;
 import ru.practicum.shareit.user.exception.UserIdNotFoundException;
