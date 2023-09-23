@@ -1,6 +1,6 @@
 package ru.practicum.shareit.booking.constant;
 
-public enum Status {
+public enum Status { /*test commit*/
     WAITING,
     APPROVED,
     REJECTED,
