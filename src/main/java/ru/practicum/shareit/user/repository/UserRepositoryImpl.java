@@ -4,9 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.exception.*;
-import ru.practicum.shareit.user.mapper.UserMapper;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,104 +12,72 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Repository
 public class UserRepositoryImpl implements UserRepository {
-    private final UserMapper userMapper;
-    private Map<Long, User> users;
+    private Map<Long, User> users = new HashMap<>();
+    private Set<String> emails = new HashSet<>();
     private Long id;
 
     @Override
-    public UserDto create(User user) {
-        if (users == null) {
-            users = new HashMap<>();
-        }
+    public User create(User user) {
+        user.setId(getId());
+        users.put(user.getId(), user);
 
-        if (!users.containsValue(user)) {
-            user.setId(getId());
-
-            Long id = user.getId();
-            users.put(id, user);
-            log.info("🟩 создан пользователь: " + user);
-
-            return userMapper.toUserDto(user);
-        }
-
-        log.info("🟩🟧 пользователь НЕ создан: " + user);
-        throw new ThisUserAlreadyExistException("данный пользователь уже существует");
+        return user;
     }
 
     @Override
-    public UserDto updateById(Long id, User updatedUser) {
-        String newEmail = updatedUser.getEmail();
-        String newName = updatedUser.getName();
-
-        User updatableUser = users.get(id);
-        String updatableEmail = updatableUser.getEmail();
-        String updatableName = updatableUser.getName();
-
-
-        if (newEmail != null && !updatableEmail.equals(newEmail)) {
-            emailAlreadyIsExists(newEmail);
-            updatableUser.setEmail(newEmail);
-            log.info("🟪 обновлено поле \"email\": " + updatableUser);
-        }
-
-        if (newName != null && !updatableName.equals(newName)) {
-            updatableUser.setName(newName);
-            log.info("🟪 обновлено поле \"name\": " + updatableUser);
-        }
-
-        return userMapper.toUserDto(updatableUser);
+    public User updateById(Long id, User updatedUser) {
+        users.put(id, updatedUser);
+        return updatedUser;
     }
 
     @Override
-    public String deleteById(Long id) {
-        String responseAndLogging = "⬛️ удален пользователь: " + users.get(id);
-        log.info(responseAndLogging);
-        users.remove(id);
+    public User deleteById(Long id) {
+        User deletedUser = users.remove(id);
 
-        return responseAndLogging;
+        return deletedUser;
     }
 
     @Override
-    public UserDto getById(Long id) {
-        User user = users.get(id);
-        log.info("🟦 выдан пользователь: " + user);
-
-        return userMapper.toUserDto(user);
+    public User getById(Long id) {
+        return users.get(id);
     }
 
     @Override
-    public List<UserDto> getAll() {
-        if (users != null) {
-            List<UserDto> allUsers = users.values()
-                    .stream()
-                    .map(userMapper::toUserDto)
-                    .collect(Collectors.toList());
-            log.info("🟦 выдан список пользователей: " + allUsers);
-
-            return allUsers;
-        }
-        throw new NoUsersExistsYet("ни один пользователь еще не добавлен, исправьте это: ➕👤");
+    public List<User> getAll() {
+        return users.values()
+                .stream()
+                .collect(Collectors.toList());
     }
 
     @Override
-    public void idIsExists(Long id) {
-        if (users != null && !users.containsKey(id)) {
-            throw new UserIdNotFoundException("введен несуществующий id пользователя: " + id);
-        }
+    public boolean idIsExists(Long id) {
+        return users.containsKey(id);
     }
 
     @Override
-    public void emailAlreadyIsExists(String email) throws NoSuchElementException {
-        if (users != null) {
-            Optional<User> userByEmail = users.values()
-                    .stream()
-                    .filter(user -> user.getEmail().equals(email))
-                    .findFirst();
+    public boolean userIsExists(User user) {
+        return users.containsValue(user);
+    }
 
-            if (!userByEmail.isEmpty()) {
-                throw new UserEmailAlreadyExistsException("почта \"" + email + "\" уже существует, придумайте другую почту");
-            }
-        }
+    @Override
+    public void createEmail(String email) {
+        emails.add(email);
+    }
+
+    @Override
+    public void updateEmail(String oldEmail, String newEmail) {
+        emails.remove(oldEmail);
+        emails.add(newEmail);
+    }
+
+    @Override
+    public void deleteEmail(String email) {
+        emails.remove(email);
+    }
+
+    @Override
+    public boolean emailIsExists(String email) throws NoSuchElementException {
+        return emails.contains(email);
     }
 
     private Long getId() {

@@ -6,10 +6,6 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.CustomerReview;
 import ru.practicum.shareit.booking.constant.Status;
-import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.exception.BookingIdNotFoundException;
-import ru.practicum.shareit.booking.mapper.BookingMapper;
-import ru.practicum.shareit.user.exception.ThisUserAlreadyExistException;
 
 import java.util.*;
 
@@ -17,85 +13,73 @@ import java.util.*;
 @RequiredArgsConstructor
 @Repository
 public class BookingRepositoryImpl implements BookingRepository {
-    private final BookingMapper bookingMapper;
-    private Map<Long, Booking> bookings;
+    private Map<Long, Booking> bookings = new HashMap<>();
     private Long id;
 
     @Override
-    public BookingDto create(Booking booking) {
-        if (bookings == null) {
-            bookings = new HashMap<>();
-        }
+    public Booking create(Booking booking) {
+        booking.setId(getId());
+        booking.setStatus(Status.WAITING);
+        bookings.put(booking.getId(), booking);
 
-        if (!bookings.containsValue(booking)) {
-            booking.setId(getId());
-            booking.setStatus(Status.WAITING);
-
-            Long id = booking.getId();
-            bookings.put(id, booking);
-            log.info("🟩 пользователем создана бронь (Booking): " + booking);
-
-            return bookingMapper.toBookingDto(booking);
-        }
-
-        log.info("🟩🟧 бронь (Booking) пользователя НЕ создана: " + booking);
-        throw new ThisUserAlreadyExistException("пользователь с id: " + booking.getBooker() + " уже создал бронь этой" +
-                " вещи");
+        return booking;
     }
 
     @Override
-    public BookingDto approve(Long bookingId) {
+    public Booking approve(Long bookingId) {
         Booking booking = bookings.get(bookingId);
         booking.setStatus(Status.APPROVED);
         log.info("🟩🟪 владельцем подтверждена бронь (Booking): " + booking);
 
-        return bookingMapper.toBookingDto(booking);
+        return booking;
     }
 
     @Override
-    public BookingDto reject(Long bookingId) {
+    public Booking reject(Long bookingId) {
         Booking booking = bookings.get(bookingId);
         booking.setStatus(Status.REJECTED);
         log.info("🟩🟧 владельцем отклонена бронь (Booking): " + booking);
 
-        return bookingMapper.toBookingDto(booking);
+        return booking;
     }
 
     @Override
-    public BookingDto cancel(Long bookingId) {
+    public Booking cancel(Long bookingId) {
         Booking booking = bookings.get(bookingId);
 
         booking.setStatus(Status.CANCELED);
         log.info("🟩🟥 пользователем отменена (из map НЕ удалена) бронь (Booking): " + booking);
 
         /*bookings.remove(bookingId);*/
-        BookingDto bookingDto = bookingMapper.toBookingDto(booking);
-        return bookingDto;
+        return booking;
     }
 
     @Override
-    public BookingDto getById(Long bookingId) {
+    public Booking getById(Long bookingId) {
         Booking booking = bookings.get(bookingId);
         log.info("🟦 выдана бронь (Booking): " + booking);
 
-        return bookingMapper.toBookingDto(booking);
+        return booking;
     }
 
     @Override
-    public BookingDto createCustomerReview(BookingDto bookingDto, CustomerReview customerReview) {
-        Booking booking = bookings.get(bookingDto.getId());
-        booking.setCustomerReview(customerReview);
+    public boolean idIsExists(Long id) {
+        return bookings.containsKey(id);
+    }
+
+    @Override
+    public boolean bookingIsExists(Booking booking) {
+        return bookings.containsValue(booking);
+    }
+
+    @Override
+    public Booking createCustomerReview(Booking booking, CustomerReview customerReview) {
+        Booking bookingFromDataBase = bookings.get(booking.getId());
+        bookingFromDataBase.setCustomerReview(customerReview);
 
         log.info("🟢 пользователем создан отзыв: " + customerReview);
 
-        return bookingMapper.toBookingDto(booking);
-    }
-
-    @Override
-    public void idIsExists(Long id) {
-        if (bookings != null && !bookings.containsKey(id)) {
-            throw new BookingIdNotFoundException("введен несуществующий id брони (Booking): " + id);
-        }
+        return bookingFromDataBase;
     }
 
     private Long getId() {

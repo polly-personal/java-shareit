@@ -6,15 +6,17 @@ import ru.practicum.shareit.item.model.Item;
 import java.util.List;
 
 public interface ItemService {
-    ItemDto create(Long userId, Item item);
+    ItemDto create(Long userId, ItemDto itemDto);
 
-    ItemDto updateById(Long ownerId, Long id, Item item);
+    ItemDto updateById(Long ownerId, Long id, ItemDto updatedItemDto);
 
-    String deleteById(Long ownerId, Long itemId);
+    String deleteById(Long itemId);
 
-    ItemDto getById(Long ownerId, Long itemId);
+    ItemDto getById(Long itemId);
 
     List<ItemDto> getAllByOwnerId(Long ownerId);
 
-    List<ItemDto> searchForUserByUserIdAndParameter(Long userId, String text);
+    void idIsExists(Long id);
+
+    List<ItemDto> searchForUserByUserIdAndParameter(String text);
 }

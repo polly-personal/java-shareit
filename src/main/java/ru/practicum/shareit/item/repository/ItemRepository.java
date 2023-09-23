@@ -1,26 +1,26 @@
 package ru.practicum.shareit.item.repository;
 
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ItemRepository {
-    ItemDto create(Item item);
+    Item create(Item item);
 
-    ItemDto updateByItemId(Long id, Item item);
+    Item updateByItemId(Long id, Item item);
 
-    String deleteById(Long id);
+    Item deleteById(Long id);
 
-    ItemDto getById(Long id);
+    Item getById(Long id);
 
-    List<ItemDto> getAllByOwnerId(Long ownerId);
+    List<Item> getAllByOwnerId(Long ownerId);
 
-    List<ItemDto> searchForUserByParameter(String text);
+    boolean idIsExists(Long id);
 
-    void ownerIdIsLinkedToItemId(Long ownerId, Long itemId);
+    boolean itemIsExists(Item item);
 
-    Long getOwnerByItemIdOrException(Long itemId);
+    List<Item> searchForUserByParameter(String text);
 
-    void idIsExists(Long id);
+    Optional<Item> getOptionalOwnerByItemId(Long itemId);
 }

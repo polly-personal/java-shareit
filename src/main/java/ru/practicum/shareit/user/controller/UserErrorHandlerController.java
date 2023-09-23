@@ -11,9 +11,8 @@ import ru.practicum.shareit.user.exception.*;
 import javax.validation.ConstraintViolationException;
 
 @Slf4j
-@RestControllerAdvice/*(basePackageClasses = UserController.class)*/
+@RestControllerAdvice/*(basePackageClasses = {UserController.class, ItemController.class})*/
 public class UserErrorHandlerController {
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public UserErrorResponse handelUserIdNotFoundException(UserIdNotFoundException e) {

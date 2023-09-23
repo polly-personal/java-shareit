@@ -1,22 +1,29 @@
 package ru.practicum.shareit.user.repository;
 
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.List;
 
 public interface UserRepository {
-    UserDto create(User user);
+    User create(User user);
 
-    UserDto updateById(Long id, User user);
+    User updateById(Long id, User user);
 
-    String deleteById(Long id);
+    void createEmail(String email);
 
-    UserDto getById(Long id);
+    void updateEmail(String oldEmail, String newEmail);
 
-    List<UserDto> getAll();
+    void deleteEmail(String email);
 
-    void idIsExists(Long id);
+    User deleteById(Long id);
 
-    void emailAlreadyIsExists(String email);
+    User getById(Long id);
+
+    List<User> getAll();
+
+    boolean idIsExists(Long id);
+
+    boolean userIsExists(User user);
+
+    boolean emailIsExists(String email);
 }
