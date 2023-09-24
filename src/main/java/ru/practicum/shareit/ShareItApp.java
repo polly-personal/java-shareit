@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ShareItApp {
 
     public static void main(String[] args) {
-        System.setProperty("server.port", "8081");
+//        System.setProperty("server.port", "8081");
         SpringApplication.run(ShareItApp.class, args);
     }
 
