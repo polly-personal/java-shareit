@@ -85,16 +85,16 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteEmail(deletedUser.getEmail());
 
         String responseAndLogging;
-        if (deletedUser != null) {
+//        if (deletedUser != null) {
             responseAndLogging = "⬛️ удален пользователь: " + deletedUser;
             log.info(responseAndLogging);
 
-        } else {
-            responseAndLogging = "⬛️ пользователь не удален: " + deletedUser;
-            log.info(responseAndLogging);
-
-            throw new UserIdNotFoundException("введен несуществующий id пользователя: " + id);
-        }
+//        } else {
+//            responseAndLogging = "⬛️ пользователь не удален: " + deletedUser;
+//            log.info(responseAndLogging);
+//
+//            throw new UserIdNotFoundException("введен несуществующий id пользователя: " + id);
+//        }
 
         return responseAndLogging;
     }
