@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface ItemRepository {
     Item create(Item item);
 
-    Item updateByItemId(Long id, Item item);
+    Item updateById(Long id, Item item);
 
     Item deleteById(Long id);
 

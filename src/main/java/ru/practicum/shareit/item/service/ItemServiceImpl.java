@@ -84,7 +84,7 @@ public class ItemServiceImpl implements ItemService {
             log.info("🟪🟧 поле \"available\" НЕ обновлено: " + updatableItem);
         }
 
-        Item updatedItem = itemRepository.updateByItemId(itemId, updatableItem);
+        Item updatedItem = itemRepository.updateById(itemId, updatableItem);
 
         return ItemMapper.toItemDto(updatedItem);
     }
@@ -149,7 +149,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchForUserByUserIdAndParameter(String text) {
+    public List<ItemDto> searchForUserByParameter(String text) {
         List<Item> issuedItems = new ArrayList<>();
 
         if (text != null && !text.isBlank()) {

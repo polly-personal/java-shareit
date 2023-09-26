@@ -1,4 +1,4 @@
 package ru.practicum.shareit.booking.dto;
 
-public interface OtherValidation {
+public interface CreateValidation {
 }

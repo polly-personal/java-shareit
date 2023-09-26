@@ -15,9 +15,10 @@ import javax.validation.constraints.*;
 public class UserDto {
     private Long id;
 
-    @NotBlank(message = "поле \"email\" должно быть заполнено", groups = MainValidation.class)
-    @Email(message = "некорректное поле \"email\"", groups = {MainValidation.class, OtherValidation.class})
+    @NotBlank(message = "поле \"email\" должно быть заполнено", groups = CreateValidation.class)
+    @Email(message = "некорректное поле \"email\"", groups = {CreateValidation.class, UpdateValidation.class})
     private String email;
 
+    @NotBlank(message = "поле \"name\" должно быть заполнено", groups = CreateValidation.class)
     private String name;
 }

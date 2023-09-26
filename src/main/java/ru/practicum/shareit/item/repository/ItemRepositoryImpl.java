@@ -24,7 +24,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
-    public Item updateByItemId(Long id, Item updatedItem) {
+    public Item updateById(Long id, Item updatedItem) {
         items.put(id, updatedItem);
         return updatedItem;
     }
@@ -69,9 +69,10 @@ public class ItemRepositoryImpl implements ItemRepository {
                         if (item.getName().toLowerCase().contains(text.toLowerCase())) {
                             return true;
                         }
-                        if (item.getDescription().toLowerCase().contains(text.toLowerCase())) {
-                            return true;
-                        }
+//                        if (item.getDescription().toLowerCase().contains(text.toLowerCase())) {
+//                            return true;
+//                        }
+                        return item.getDescription().toLowerCase().contains(text.toLowerCase());
                     }
 
                     return false;

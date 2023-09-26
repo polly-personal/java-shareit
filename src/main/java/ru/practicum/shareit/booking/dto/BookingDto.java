@@ -20,15 +20,15 @@ import java.time.LocalDateTime;
 public class BookingDto {
     private Long id;
 
-    @FutureOrPresent(message = "поле \"start\" должно быть сейчас или в будущем", groups = MainValidation.class)
-    @NotNull(message = "поле \"start\" должно быть заполнено", groups = MainValidation.class)
+    @FutureOrPresent(message = "поле \"start\" должно быть сейчас или в будущем", groups = CreateValidation.class)
+    @NotNull(message = "поле \"start\" должно быть заполнено", groups = CreateValidation.class)
     private LocalDateTime start;
 
-    @Future(message = "поле \"end\" должно быть в будущем", groups = MainValidation.class)
-    @NotNull(message = "поле \"end\" должно быть заполнено", groups = MainValidation.class)
+    @Future(message = "поле \"end\" должно быть в будущем", groups = CreateValidation.class)
+    @NotNull(message = "поле \"end\" должно быть заполнено", groups = CreateValidation.class)
     private LocalDateTime end;
 
-    @NotNull(message = "поле \"itemId\" должно быть заполнено", groups = MainValidation.class)
+    @NotNull(message = "поле \"itemId\" должно быть заполнено", groups = CreateValidation.class)
     private Long itemId;
 
     private Long booker;

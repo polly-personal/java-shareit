@@ -17,5 +17,5 @@ public interface ItemService {
 
     void idIsExists(Long id);
 
-    List<ItemDto> searchForUserByUserIdAndParameter(String text);
+    List<ItemDto> searchForUserByParameter(String text);
 }

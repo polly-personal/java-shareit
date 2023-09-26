@@ -1,4 +1,4 @@
 package ru.practicum.shareit.user.dto;
 
-public interface MainValidation {
+public interface CreateValidation {
 }

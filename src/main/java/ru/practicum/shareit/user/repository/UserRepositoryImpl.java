@@ -44,9 +44,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public List<User> getAll() {
-        return users.values()
-                .stream()
-                .collect(Collectors.toList());
+        return new ArrayList<>(users.values());
     }
 
     @Override

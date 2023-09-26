@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class ItemRequestDto {
     private Long id;
 
-    @NotBlank(message = "поле \"description\" должно быть заполнено", groups = MainValidation.class)
+    @NotBlank(message = "поле \"description\" должно быть заполнено", groups = CreateValidation.class)
     private String description;
 
     private Long requestor;
