@@ -69,9 +69,6 @@ public class ItemRepositoryImpl implements ItemRepository {
                         if (item.getName().toLowerCase().contains(text.toLowerCase())) {
                             return true;
                         }
-//                        if (item.getDescription().toLowerCase().contains(text.toLowerCase())) {
-//                            return true;
-//                        }
                         return item.getDescription().toLowerCase().contains(text.toLowerCase());
                     }
 
