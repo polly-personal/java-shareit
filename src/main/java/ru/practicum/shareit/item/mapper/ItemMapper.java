@@ -1,7 +1,7 @@
 package ru.practicum.shareit.item.mapper;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.GiveItemDto;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
@@ -9,21 +9,22 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class ItemMapper {
-    public static ItemDto toItemDto(Item item) {
-        ItemDto itemDto = new ItemDto(
-                item.getId(),
-                item.getName(),
-                item.getDescription(),
-                item.getAvailable(),
-                item.getRequestId() != null ? item.getRequestId() : null
-        );
-        log.info("🔀 item: " + item + " сконвертирован в itemDto: " + itemDto);
+    public static GiveItemDto toItemDto(Item item) {
+        GiveItemDto giveItemDto = GiveItemDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+//                item.getRequestId() != null ? item.getRequestId() : null
+                .build();
+//        );
+        log.info("🔀 item: " + item + " сконвертирован в itemDto: " + giveItemDto);
 
-        return itemDto;
+        return giveItemDto;
     }
 
-    public static List<ItemDto> toItemsDto(List<Item> items) {
-        List<ItemDto> itemsDto = items
+    public static List<GiveItemDto> toItemsDto(List<Item> items) {
+        List<GiveItemDto> itemsDto = items
                 .stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
@@ -33,20 +34,26 @@ public class ItemMapper {
         return itemsDto;
     }
 
-    public static Item toItem(ItemDto itemDto) {
-        Item item = new Item(
-                itemDto.getId(),
-                itemDto.getName(),
-                itemDto.getDescription(),
-                itemDto.getAvailable(),
-                itemDto.getRequestId() != null ? itemDto.getRequestId() : null
-        );
-        log.info("🔀 itemDto: " + itemDto + " сконвертирован в item: " + item);
+    public static Item toItem(GiveItemDto giveItemDto) {
+        Item item = Item.builder()
+                .id(giveItemDto.getId())
+                .name(giveItemDto.getName())
+                .description(giveItemDto.getDescription())
+                .available(giveItemDto.getAvailable())
+                .build();
+//                new Item(
+//                itemDto.getId(),
+//                itemDto.getName(),
+//                itemDto.getDescription(),
+//                itemDto.getAvailable()
+////                itemDto.getRequestId() != null ? itemDto.getRequestId() : null
+//        );
+        log.info("🔀 itemDto: " + giveItemDto + " сконвертирован в item: " + item);
 
         return item;
     }
 
-    public static List<Item> toItems(List<ItemDto> itemsDto) {
+    public static List<Item> toItems(List<GiveItemDto> itemsDto) {
         List<Item> items = itemsDto
                 .stream()
                 .map(ItemMapper::toItem)

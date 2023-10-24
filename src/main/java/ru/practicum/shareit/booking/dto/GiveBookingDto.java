@@ -1,7 +1,7 @@
 package ru.practicum.shareit.booking.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.booking.model.CustomerReview;
 import ru.practicum.shareit.booking.constant.Status;
@@ -15,9 +15,10 @@ import java.time.LocalDateTime;
  * TODO Sprint add-bookings.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@AllArgsConstructor
+@Builder
+//@AllArgsConstructor
 @Data
-public class BookingDto {
+public class GiveBookingDto {
     private Long id;
 
     @FutureOrPresent(message = "поле \"start\" должно быть сейчас или в будущем", groups = CreateValidation.class)
@@ -31,11 +32,11 @@ public class BookingDto {
     @NotNull(message = "поле \"itemId\" должно быть заполнено", groups = CreateValidation.class)
     private Long itemId;
 
-    private Long booker;
+//    private Long booker;
 
-    private Status status;
+//    private Status status;
 
-    private Long ownerItem;
+//    private Long ownerItem;
 
-    private CustomerReview customerReview;
+//    private CustomerReview customerReview;
 }

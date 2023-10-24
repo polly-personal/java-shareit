@@ -75,7 +75,7 @@ public class BookingRepositoryImpl implements BookingRepository {
     @Override
     public Booking createCustomerReview(Booking booking, CustomerReview customerReview) {
         Booking bookingFromDataBase = bookings.get(booking.getId());
-        bookingFromDataBase.setCustomerReview(customerReview);
+        /*bookingFromDataBase.setCustomerReview(customerReview);*/
 
         log.info("🟢 пользователем создан отзыв: " + customerReview);
 

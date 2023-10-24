@@ -10,7 +10,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserMapper {
     public static UserDto toUserDto(User user) {
-        UserDto userDto = new UserDto(user.getId(), user.getEmail(), user.getName());
+        UserDto userDto = UserDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .build();
+//        user.getId(), user.getName(), user.getEmail());
         log.info("🔀 user: " + user + " сконвертирован в userDto: " + userDto);
 
         return userDto;
@@ -26,7 +31,12 @@ public class UserMapper {
 
 
     public static User toUser(UserDto userDto) {
-        User user = new User(userDto.getId(), userDto.getEmail(), userDto.getName());
+        User user = User.builder()
+                .id(userDto.getId())
+                .name(userDto.getName())
+                .email(userDto.getEmail())
+                .build();
+//                new User(userDto.getId(), userDto.getName(), userDto.getEmail());
         log.info("🔀 userDto: " + userDto + " сконвертирован в user: " + user);
 
         return user;

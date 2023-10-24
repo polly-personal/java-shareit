@@ -3,7 +3,7 @@ package ru.practicum.shareit.item.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.GiveItemDto;
 import ru.practicum.shareit.item.dto.CreateValidation;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -21,16 +21,16 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto create(@RequestHeader("X-Sharer-User-Id") @Positive @Min(1) Long userId,
-                          @Validated(CreateValidation.class) @RequestBody ItemDto itemDto) {
-        return itemService.create(userId, itemDto);
+    public GiveItemDto create(@RequestHeader("X-Sharer-User-Id") @Positive @Min(1) Long userId,
+                              @Validated(CreateValidation.class) @RequestBody GiveItemDto giveItemDto) {
+        return itemService.create(userId, giveItemDto);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateById(@RequestHeader("X-Sharer-User-Id") @Positive @Min(1) Long ownerId,
-                              @PathVariable(name = "itemId") @Positive @Min(1) Long itemId,
-                              @RequestBody ItemDto updatedItemDto) {
-        return itemService.updateById(ownerId, itemId, updatedItemDto);
+    public GiveItemDto updateById(@RequestHeader("X-Sharer-User-Id") @Positive @Min(1) Long ownerId,
+                                  @PathVariable(name = "itemId") @Positive @Min(1) Long itemId,
+                                  @RequestBody GiveItemDto updatedGiveItemDto) {
+        return itemService.updateById(ownerId, itemId, updatedGiveItemDto);
     }
 
     @DeleteMapping("/{itemId}")
@@ -39,17 +39,17 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getById(@PathVariable(name = "itemId") @Positive @Min(1) Long itemId) {
+    public GiveItemDto getById(@PathVariable(name = "itemId") @Positive @Min(1) Long itemId) {
         return itemService.getById(itemId);
     }
 
     @GetMapping
-    public List<ItemDto> getAllByOwnerId(@RequestHeader("X-Sharer-User-Id") @Positive @Min(1) Long ownerId) {
+    public List<GiveItemDto> getAllByOwnerId(@RequestHeader("X-Sharer-User-Id") @Positive @Min(1) Long ownerId) {
         return itemService.getAllByOwnerId(ownerId);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchForUserByParameter(@RequestParam String text) {
+    public List<GiveItemDto> searchForUserByParameter(@RequestParam String text) {
         return itemService.searchForUserByParameter(text);
     }
 }

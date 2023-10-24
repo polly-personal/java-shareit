@@ -1,20 +1,20 @@
 package ru.practicum.shareit.booking.service;
 
 import ru.practicum.shareit.booking.model.CustomerReview;
-import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.GiveBookingDto;
 
 public interface BookingService {
-    BookingDto getById(Long bookingId);
+    GiveBookingDto getById(Long bookingId);
 
-    BookingDto create(Long userId, BookingDto bookingDto);
+    GiveBookingDto create(Long userId, GiveBookingDto giveBookingDto);
 
-    BookingDto approve(Long ownerId, Long bookingId);
+    GiveBookingDto approve(Long ownerId, Long bookingId);
 
-    BookingDto reject(Long ownerId, Long bookingId);
+    GiveBookingDto reject(Long ownerId, Long bookingId);
 
-    BookingDto cancel(Long userId, Long bookingId);
+    GiveBookingDto cancel(Long userId, Long bookingId);
 
     void idIsExists(Long id);
 
-    BookingDto createCustomerReview(Long bookingId, CustomerReview customerReview);
+    GiveBookingDto createCustomerReview(Long bookingId, CustomerReview customerReview);
 }

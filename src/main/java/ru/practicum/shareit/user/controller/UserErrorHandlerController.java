@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.user.exception.*;
 
 import javax.validation.ConstraintViolationException;
+import java.lang.reflect.InvocationTargetException;
 
 @Slf4j
 @RestControllerAdvice/*(basePackageClasses = {UserController.class, ItemController.class})*/

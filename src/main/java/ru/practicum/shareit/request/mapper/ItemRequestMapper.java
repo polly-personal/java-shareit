@@ -11,12 +11,18 @@ import java.util.stream.Collectors;
 public class ItemRequestMapper {
 
     public static ItemRequestDto toRequestDto(ItemRequest itemRequest) {
-        ItemRequestDto itemRequestDto = new ItemRequestDto(
-                itemRequest.getId(),
-                itemRequest.getDescription(),
-                itemRequest.getRequestor(),
-                itemRequest.getCreated()
-        );
+        ItemRequestDto itemRequestDto = ItemRequestDto.builder()
+                .id(itemRequest.getId())
+                .description(itemRequest.getDescription())
+//                .requestor(itemRequest.getRequestor())
+                .created(itemRequest.getCreated())
+                .build();
+//                new ItemRequestDto(
+//                itemRequest.getId(),
+//                itemRequest.getDescription(),
+//                itemRequest.getRequestor(),
+//                itemRequest.getCreated()
+//        );
         log.info("🔀 itemRequest: " + itemRequest + " сконвертирован в itemRequestDto: " + itemRequestDto);
 
         return itemRequestDto;
@@ -34,12 +40,18 @@ public class ItemRequestMapper {
     }
 
     public static ItemRequest toItemRequest(ItemRequestDto itemRequestDto) {
-        ItemRequest itemRequest = new ItemRequest(
-                itemRequestDto.getId(),
-                itemRequestDto.getDescription(),
-                itemRequestDto.getRequestor(),
-                itemRequestDto.getCreated()
-        );
+        ItemRequest itemRequest = ItemRequest.builder()
+                .id(itemRequestDto.getId())
+                .description(itemRequestDto.getDescription())
+                .created(itemRequestDto.getCreated())
+//                .requestor(itemRequestDto.getRequestor())
+                .build();
+//                new ItemRequest(
+//                itemRequestDto.getId(),
+//                itemRequestDto.getDescription(),
+//                itemRequestDto.getCreated(),
+//                itemRequestDto.getRequestor()
+//        );
         log.info("🔀 itemRequestDto: " + itemRequestDto + " сконвертирован в itemRequest: " + itemRequest);
 
         return itemRequest;

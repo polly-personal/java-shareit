@@ -1,7 +1,7 @@
 package ru.practicum.shareit.item.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -12,9 +12,10 @@ import javax.validation.constraints.NotNull;
  * TODO Sprint add-controllers.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@AllArgsConstructor
+@Builder
+//@AllArgsConstructor
 @Data
-public class ItemDto {
+public class GiveItemDto {
     private Long id;
 
     @NotBlank(message = "поле \"name\" должно быть заполнено", groups = CreateValidation.class)
@@ -26,5 +27,7 @@ public class ItemDto {
     @NotNull(message = "поле \"available\" должно быть заполнено", groups = CreateValidation.class)
     private Boolean available;
 
-    private Long requestId;
+//    private Long ownerId;
+
+    private Long itemRequestId;
 }

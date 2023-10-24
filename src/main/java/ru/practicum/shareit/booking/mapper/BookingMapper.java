@@ -1,65 +1,67 @@
 package ru.practicum.shareit.booking.mapper;
 
 import lombok.extern.slf4j.Slf4j;
+import ru.practicum.shareit.booking.dto.GetBookingDto;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.GiveBookingDto;
+import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
 public class BookingMapper {
-    public static BookingDto toBookingDto(Booking booking) {
-        BookingDto bookingDto = new BookingDto(
-                booking.getId(),
-                booking.getStart(),
-                booking.getEnd(),
-                booking.getItemId(),
-                booking.getBooker(),
-                booking.getStatus(),
-                booking.getOwnerItem(),
-                booking.getCustomerReview()
-        );
-        log.info("🔀 booking: " + booking + " сконвертирован в bookingDto: " + bookingDto);
+    public static GetBookingDto toBookingDto(Booking booking) {
+        GetBookingDto getBookingDto = GetBookingDto.builder()
+                .id(booking.getId())
+                .start(booking.getStart())
+                .end(booking.getEnd())
+                .itemId(booking.getItem().getId())
+                .bookerId(booking.getBooker().getId())
+                .status(booking.getStatus())
+//                booking.getOwnerItem(),
+//                booking.getCustomerReview()
+                .build();
+        log.info("🔀 booking: " + booking + " сконвертирован в getBookingDto: " + getBookingDto);
 
-        return bookingDto;
+        return getBookingDto;
     }
 
-    public static List<BookingDto> toBookingsDto(List<Booking> bookings) {
-        List<BookingDto> bookingsDto = bookings
+    public static List<GetBookingDto> toBookingsDto(List<Booking> bookings) {
+        List<GetBookingDto> getBookingDtos = bookings
                 .stream()
                 .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
 
-        log.info("🔀 список bookings: " + bookings + " сконвертирован в bookingsDto: " + bookingsDto);
+        log.info("🔀 список bookings: " + bookings + " сконвертирован в getBookingDtos: " + getBookingDtos);
 
-        return bookingsDto;
+        return getBookingDtos;
     }
 
 
-    public static Booking toBooking(BookingDto bookingDto) {
-        Booking booking = new Booking(
-                bookingDto.getId(),
-                bookingDto.getStart(),
-                bookingDto.getEnd(),
-                bookingDto.getItemId(),
-                bookingDto.getBooker(),
-                bookingDto.getStatus(),
-                bookingDto.getOwnerItem(),
-                bookingDto.getCustomerReview()
-        );
-        log.info("🔀 bookingDto: " + bookingDto + " сконвертирован в booking: " + booking);
+    public static Booking toBooking(GiveBookingDto giveBookingDto) {
+        Booking booking = Booking.builder()
+                .id(giveBookingDto.getId())
+                .start(giveBookingDto.getStart())
+                .end(giveBookingDto.getEnd())
+//                .item()giveBookingDto.getItemId()
+//                .booker()giveBookingDto.getBooker()
+//                .status(giveBookingDto.getStatus())
+//                giveBookingDto.getOwnerItem(),
+//                giveBookingDto.getCustomerReview()
+                .build();
+        log.info("🔀 giveBookingDto: " + giveBookingDto + " сконвертирован в booking: " + booking);
 
         return booking;
     }
 
-    public static List<Booking> toBookings(List<BookingDto> bookingsDto) {
-        List<Booking> bookings = bookingsDto
+    public static List<Booking> toBookings(List<GiveBookingDto> giveBookingsDto) {
+        List<Booking> bookings = giveBookingsDto
                 .stream()
                 .map(BookingMapper::toBooking)
                 .collect(Collectors.toList());
 
-        log.info("🔀 список bookingsDto: " + bookingsDto + " сконвертирован в bookings: " + bookings);
+        log.info("🔀 список giveBookingsDto: " + giveBookingsDto + " сконвертирован в bookings: " + bookings);
 
         return bookings;
     }

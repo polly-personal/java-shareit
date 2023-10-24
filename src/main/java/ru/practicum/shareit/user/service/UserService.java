@@ -13,7 +13,7 @@ public interface UserService {
 
     UserDto getById(Long id);
 
-    Long getOwnerByItemIdOrThrow(Long itemId);
+//    Long getOwnerIdByItemIdOrThrow(Long itemId);
 
     List<UserDto> getAll();
 

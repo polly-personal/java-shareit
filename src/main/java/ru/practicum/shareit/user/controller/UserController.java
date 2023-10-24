@@ -7,6 +7,7 @@ import ru.practicum.shareit.user.dto.CreateValidation;
 import ru.practicum.shareit.user.dto.UpdateValidation;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import javax.validation.constraints.*;
 import java.util.List;
@@ -20,10 +21,12 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
 
     @PostMapping
     public UserDto create(@Validated(CreateValidation.class) @RequestBody UserDto userDto) {
-        return userService.create(userDto);
+        return userServiceImpl.create(userDto);
+       /* return userService.create(userDto);*/
     }
 
     @PatchMapping("/{userId}")

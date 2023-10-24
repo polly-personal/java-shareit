@@ -23,7 +23,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         idIsExists(userId);
 
         ItemRequest itemRequestFromDto = ItemRequestMapper.toItemRequest(itemRequestDto);
-        itemRequestFromDto.setRequestor(userId);
+        /*itemRequestFromDto.setRequestor(userId);*/
 
         if (!itemRequestRepository.itemRequestIsExists(itemRequestFromDto)) {
             ItemRequest createdItemRequest = itemRequestRepository.create(itemRequestFromDto);
@@ -39,7 +39,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public void idIsExists(Long id) {
-        if (id != null && !userRepository.idIsExists(id)) {
+//        if (id != null && !userRepository.idIsExists(id)) {
+        if (id != null && !userRepository.existsById(id)) {
             throw new ItemRequestIdNotFoundException("введен несуществующий id запроса вещи (ItemRequest): " + id);
         }
     }
