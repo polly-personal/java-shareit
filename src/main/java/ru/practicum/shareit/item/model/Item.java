@@ -34,21 +34,9 @@ public class Item {
 
     @JoinColumn(name = "owner_id")
     @ManyToOne(fetch = FetchType.LAZY)
-//    private Long ownerId;
     private User owner;
 
     @JoinColumn(name = "request_id")
     @OneToOne
-//    private Long requestId;
-    private ItemRequest itemRequest; // если вещь была создана по запросу, то это ссылка на запрос
-
-
-//    public Item(Long id, String name, String description, Boolean isAvailable, /*Long requestId*/ ItemRequest itemRequest) {
-//        this.id = id;
-//        this.name = name;
-//        this.description = description;
-//        this.isAvailable = isAvailable;
-////        this.requestId = requestId;
-//        this.itemRequest = itemRequest;
-//    }
+    private ItemRequest itemRequest;
 }

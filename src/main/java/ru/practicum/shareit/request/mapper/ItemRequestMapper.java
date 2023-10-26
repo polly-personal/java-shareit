@@ -14,17 +14,10 @@ public class ItemRequestMapper {
         ItemRequestDto itemRequestDto = ItemRequestDto.builder()
                 .id(itemRequest.getId())
                 .description(itemRequest.getDescription())
-//                .requestor(itemRequest.getRequestor())
                 .created(itemRequest.getCreated())
                 .build();
-//                new ItemRequestDto(
-//                itemRequest.getId(),
-//                itemRequest.getDescription(),
-//                itemRequest.getRequestor(),
-//                itemRequest.getCreated()
-//        );
-        log.info("🔀 itemRequest: " + itemRequest + " сконвертирован в itemRequestDto: " + itemRequestDto);
 
+        log.info("🔀 itemRequest: " + itemRequest + " сконвертирован в itemRequestDto: " + itemRequestDto);
         return itemRequestDto;
     }
 
@@ -35,7 +28,6 @@ public class ItemRequestMapper {
                 .collect(Collectors.toList());
 
         log.info("🔀 список itemRequests: " + itemRequests + " сконвертирован в itemRequestsDto: " + itemRequestsDto);
-
         return itemRequestsDto;
     }
 
@@ -44,16 +36,9 @@ public class ItemRequestMapper {
                 .id(itemRequestDto.getId())
                 .description(itemRequestDto.getDescription())
                 .created(itemRequestDto.getCreated())
-//                .requestor(itemRequestDto.getRequestor())
                 .build();
-//                new ItemRequest(
-//                itemRequestDto.getId(),
-//                itemRequestDto.getDescription(),
-//                itemRequestDto.getCreated(),
-//                itemRequestDto.getRequestor()
-//        );
-        log.info("🔀 itemRequestDto: " + itemRequestDto + " сконвертирован в itemRequest: " + itemRequest);
 
+        log.info("🔀 itemRequestDto: " + itemRequestDto + " сконвертирован в itemRequest: " + itemRequest);
         return itemRequest;
     }
 
@@ -64,7 +49,6 @@ public class ItemRequestMapper {
                 .collect(Collectors.toList());
 
         log.info("🔀 список itemRequestDto: " + itemRequestDto + " сконвертирован в itemRequests: " + itemRequests);
-
         return itemRequests;
     }
 }

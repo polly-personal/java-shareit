@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,19 +33,13 @@ public class Booking {
 
     @JoinColumn(name = "item_id")
     @ManyToOne
-//    private Long itemId;
     private Item item;
 
     @JoinColumn(name = "booker_id")
     @ManyToOne
-//    private Long booker;
     private User booker;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
     private Status status;
-
-//    private Long ownerItem;
-
-//    private CustomerReview customerReview; //todo что делать с этим полем?
 }

@@ -3,6 +3,8 @@ package ru.practicum.shareit.item.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Data;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.user.model.User;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -13,9 +15,8 @@ import javax.validation.constraints.NotNull;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder
-//@AllArgsConstructor
 @Data
-public class GiveItemDto {
+public class ItemDtoOutForBooking {
     private Long id;
 
     @NotBlank(message = "поле \"name\" должно быть заполнено", groups = CreateValidation.class)
@@ -27,7 +28,7 @@ public class GiveItemDto {
     @NotNull(message = "поле \"available\" должно быть заполнено", groups = CreateValidation.class)
     private Boolean available;
 
-//    private Long ownerId;
+    private User owner;
 
-    private Long itemRequestId;
+    private ItemRequest itemRequest;
 }

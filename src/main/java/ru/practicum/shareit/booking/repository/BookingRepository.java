@@ -1,22 +1,39 @@
 package ru.practicum.shareit.booking.repository;
 
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.JpaRepository;
+import ru.practicum.shareit.booking.constant.Status;
+import ru.practicum.shareit.booking.dto.BookingDtoOutForItem;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.CustomerReview;
 
-public interface BookingRepository {
-    Booking create(Booking booking);
+import java.time.LocalDateTime;
+import java.util.List;
 
-    Booking approve(Long bookingId);
+public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    Booking reject(Long bookingId);
+    List<Booking> findAllByBookerId(Long bookerId, Sort sort);
 
-    Booking cancel(Long bookingId);
+    List<Booking> findAllByBookerIdAndStartBeforeAndEndAfter(Long bookerId, LocalDateTime start, LocalDateTime end, Sort sort);
 
-    Booking getById(Long bookingId);
+    List<Booking> findAllByBookerIdAndStartAfter(Long bookerId, LocalDateTime dateTime, Sort sort);
 
-    Booking createCustomerReview(Booking booking, CustomerReview customerReview);
+    List<Booking> findAllByBookerIdAndEndBefore(Long bookerId, LocalDateTime dateTime, Sort sort);
 
-    boolean idIsExists(Long id);
+    List<Booking> findAllByBookerIdAndStatusEquals(Long bookerId, Status status, Sort sort);
 
-    boolean bookingIsExists(Booking booking);
+    List<Booking> findAllByItemOwnerId(Long bookerId, Sort sort);
+
+    List<Booking> findAllByItemOwnerIdAndStartBeforeAndEndAfter(Long bookerId, LocalDateTime start, LocalDateTime end, Sort sort);
+
+    List<Booking> findAllByItemOwnerIdAndStartAfter(Long bookerId, LocalDateTime dateTime, Sort sort);
+
+    List<Booking> findAllByItemOwnerIdAndEndBefore(Long bookerId, LocalDateTime dateTime, Sort sort);
+
+    List<Booking> findAllByItemOwnerIdAndStatusEquals(Long bookerId, Status status, Sort sort);
+
+    BookingDtoOutForItem findFirstByItemIdAndStartBeforeOrderByEndDesc(Long itemId, LocalDateTime dateTime);
+
+    BookingDtoOutForItem findFirstByItemIdAndStartAfterAndStatusOrderByStartAsc(Long itemId, LocalDateTime dateTime, Status status);
+
+    List<Booking> findAllByBookerIdAndItemIdAndEndBeforeAndStatusEquals(Long bookerId, Long itemId, LocalDateTime dateTime, Status status);
 }

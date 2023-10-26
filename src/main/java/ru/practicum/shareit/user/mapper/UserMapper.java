@@ -15,9 +15,8 @@ public class UserMapper {
                 .name(user.getName())
                 .email(user.getEmail())
                 .build();
-//        user.getId(), user.getName(), user.getEmail());
-        log.info("🔀 user: " + user + " сконвертирован в userDto: " + userDto);
 
+        log.info("🔀 user: " + user + " сконвертирован в userDto: " + userDto);
         return userDto;
     }
 
@@ -25,7 +24,6 @@ public class UserMapper {
         List<UserDto> usersDto = users.stream().map(UserMapper::toUserDto).collect(Collectors.toList());
 
         log.info("🔀 список users: " + users + " сконвертирован в usersDto: " + usersDto);
-
         return usersDto;
     }
 
@@ -36,9 +34,8 @@ public class UserMapper {
                 .name(userDto.getName())
                 .email(userDto.getEmail())
                 .build();
-//                new User(userDto.getId(), userDto.getName(), userDto.getEmail());
-        log.info("🔀 userDto: " + userDto + " сконвертирован в user: " + user);
 
+        log.info("🔀 userDto: " + userDto + " сконвертирован в user: " + user);
         return user;
     }
 
@@ -46,7 +43,6 @@ public class UserMapper {
         List<User> users = usersDto.stream().map(UserMapper::toUser).collect(Collectors.toList());
 
         log.info("🔀 список usersDto: " + usersDto + " сконвертирован в users: " + users);
-
         return users;
     }
 }

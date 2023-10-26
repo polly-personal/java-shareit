@@ -3,8 +3,6 @@ package ru.practicum.shareit.booking.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.booking.model.CustomerReview;
-import ru.practicum.shareit.booking.constant.Status;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
@@ -16,9 +14,8 @@ import java.time.LocalDateTime;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder
-//@AllArgsConstructor
 @Data
-public class GiveBookingDto {
+public class BookingDtoIn {
     private Long id;
 
     @FutureOrPresent(message = "поле \"start\" должно быть сейчас или в будущем", groups = CreateValidation.class)
@@ -31,12 +28,4 @@ public class GiveBookingDto {
 
     @NotNull(message = "поле \"itemId\" должно быть заполнено", groups = CreateValidation.class)
     private Long itemId;
-
-//    private Long booker;
-
-//    private Status status;
-
-//    private Long ownerItem;
-
-//    private CustomerReview customerReview;
 }

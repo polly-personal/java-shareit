@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.item.exception.*;
 import ru.practicum.shareit.request.controller.ItemRequestErrorResponse;
-import ru.practicum.shareit.request.exception.ItemRequestIdNotFoundException;
+import ru.practicum.shareit.request.exception.ItemRequestIdNotFound;
 
 import javax.validation.ConstraintViolationException;
 
@@ -18,7 +18,7 @@ import javax.validation.ConstraintViolationException;
 public class ItemErrorHandlerController {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ItemRequestErrorResponse handelItemRequestIdNotFoundException(ItemRequestIdNotFoundException e) {
+    public ItemRequestErrorResponse handelItemRequestIdNotFoundException(ItemRequestIdNotFound e) {
         log.warn("🟥🖍️ 404 - Not found: \"{}\"", e.getMessage(), e);
         return new ItemRequestErrorResponse("🟥🖍️ " + e.getMessage());
     }
@@ -26,21 +26,21 @@ public class ItemErrorHandlerController {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ItemErrorResponse handelItemIdNotFoundException(ItemIdNotFoundException e) {
+    public ItemErrorResponse handelItemIdNotFoundException(ItemIdNotFound e) {
         log.warn("🟥📦 404 - Not found: \"{}\"", e.getMessage(), e);
         return new ItemErrorResponse("🟥📦 " + e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ItemErrorResponse handelOwnerIdIsNotLinkedToItemId(OwnerIdIsNotLinkedToItemId e) {
+    public ItemErrorResponse handelOwnerIdIsNotLinkedToItemId(ItemOwnerIdIsNotLinkedToItemId e) {
         log.warn("🟥📦 404 - Not found: \"{}\"", e.getMessage(), e);
         return new ItemErrorResponse("🟥📦 " + e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ItemErrorResponse handelNoItemsExistsYet(NoItemsExistsYet e) {
+    public ItemErrorResponse handelNoItemsExistsYet(ItemNoItemsExistsYet e) {
         log.warn("🟥📦 404 - Not found: \"{}\"", e.getMessage(), e);
         return new ItemErrorResponse("🟥📦 " + e.getMessage());
     }
@@ -48,21 +48,28 @@ public class ItemErrorHandlerController {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ItemErrorResponse handelItemNameIsEmptyException(ItemNameIsEmptyException e) {
+    public ItemErrorResponse handelItemNameIsEmptyException(ItemNameIsEmpty e) {
         log.warn("🟥📦 400 - Bad Request: \"{}\"", e.getMessage(), e);
         return new ItemErrorResponse("🟥📦 " + e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ItemErrorResponse handelItemDescriptionIsEmptyException(ItemDescriptionIsEmptyException e) {
+    public ItemErrorResponse handelItemDescriptionIsEmptyException(ItemDescriptionIsEmpty e) {
         log.warn("🟥📦 400 - Bad Request: \"{}\"", e.getMessage(), e);
         return new ItemErrorResponse("🟥📦 " + e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ItemErrorResponse handelItemAvailableIsEmptyException(ItemAvailableIsEmptyException e) {
+    public ItemErrorResponse handelItemAvailableIsEmptyException(ItemAvailableIsEmpty e) {
+        log.warn("🟥📦 400 - Bad Request: \"{}\"", e.getMessage(), e);
+        return new ItemErrorResponse("🟥📦 " + e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ItemErrorResponse handelItemCommentatorIdNotHaveCompletedBooking(ItemCommentatorIdNotHaveCompletedBooking e) {
         log.warn("🟥📦 400 - Bad Request: \"{}\"", e.getMessage(), e);
         return new ItemErrorResponse("🟥📦 " + e.getMessage());
     }

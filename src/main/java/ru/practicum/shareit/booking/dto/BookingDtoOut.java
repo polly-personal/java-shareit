@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.booking.constant.Status;
@@ -12,9 +13,9 @@ import java.time.LocalDateTime;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder
-//@AllArgsConstructor
+@AllArgsConstructor
 @Data
-public class GetBookingDto {
+public class BookingDtoOut {
     private Long id;
 
     private LocalDateTime start;
@@ -23,13 +24,20 @@ public class GetBookingDto {
 
     private Status status;
 
-    private Long bookerId;
+    private Booker booker;
 
-    private Long itemId;
+    private Item item;
 
-    private String itemName;
+    @AllArgsConstructor
+    @Data
+    public static class Booker {
+        private Long id;
+    }
 
-//    private Long ownerItem;
-
-//    private CustomerReview customerReview;
+    @AllArgsConstructor
+    @Data
+    public static class Item {
+        private Long id;
+        private String name;
+    }
 }

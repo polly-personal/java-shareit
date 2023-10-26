@@ -26,7 +26,6 @@ public class UserController {
     @PostMapping
     public UserDto create(@Validated(CreateValidation.class) @RequestBody UserDto userDto) {
         return userServiceImpl.create(userDto);
-       /* return userService.create(userDto);*/
     }
 
     @PatchMapping("/{userId}")
