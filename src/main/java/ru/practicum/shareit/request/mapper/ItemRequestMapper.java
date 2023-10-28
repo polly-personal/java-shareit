@@ -1,5 +1,6 @@
 package ru.practicum.shareit.request.mapper;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -7,10 +8,11 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@UtilityClass
 @Slf4j
 public class ItemRequestMapper {
 
-    public static ItemRequestDto toRequestDto(ItemRequest itemRequest) {
+    public ItemRequestDto toRequestDto(ItemRequest itemRequest) {
         ItemRequestDto itemRequestDto = ItemRequestDto.builder()
                 .id(itemRequest.getId())
                 .description(itemRequest.getDescription())
@@ -21,7 +23,7 @@ public class ItemRequestMapper {
         return itemRequestDto;
     }
 
-    public static List<ItemRequestDto> toItemRequestsDto(List<ItemRequest> itemRequests) {
+    public List<ItemRequestDto> toItemRequestsDto(List<ItemRequest> itemRequests) {
         List<ItemRequestDto> itemRequestsDto = itemRequests
                 .stream()
                 .map(ItemRequestMapper::toRequestDto)
@@ -31,7 +33,7 @@ public class ItemRequestMapper {
         return itemRequestsDto;
     }
 
-    public static ItemRequest toItemRequest(ItemRequestDto itemRequestDto) {
+    public ItemRequest toItemRequest(ItemRequestDto itemRequestDto) {
         ItemRequest itemRequest = ItemRequest.builder()
                 .id(itemRequestDto.getId())
                 .description(itemRequestDto.getDescription())
@@ -42,7 +44,7 @@ public class ItemRequestMapper {
         return itemRequest;
     }
 
-    public static List<ItemRequest> toItemRequests(List<ItemRequestDto> itemRequestDto) {
+    public List<ItemRequest> toItemRequests(List<ItemRequestDto> itemRequestDto) {
         List<ItemRequest> itemRequests = itemRequestDto
                 .stream()
                 .map(ItemRequestMapper::toItemRequest)

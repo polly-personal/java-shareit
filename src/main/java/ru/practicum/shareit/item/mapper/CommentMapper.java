@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.mapper;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import ru.practicum.shareit.item.dto.CommentDtoOut;
 import ru.practicum.shareit.item.dto.CommentDtoIn;
@@ -8,9 +9,11 @@ import ru.practicum.shareit.item.model.Comment;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@UtilityClass
+
 @Slf4j
 public class CommentMapper {
-    public static CommentDtoOut toCommentDto(Comment comment) {
+    public CommentDtoOut toCommentDtoOut(Comment comment) {
         CommentDtoOut commentDtoOut = CommentDtoOut.builder()
                 .id(comment.getId())
                 .text(comment.getText())
@@ -22,17 +25,17 @@ public class CommentMapper {
         return commentDtoOut;
     }
 
-    public static List<CommentDtoOut> toCommentsDto(List<Comment> comments) {
+    public List<CommentDtoOut> toCommentsDtoOut(List<Comment> comments) {
         List<CommentDtoOut> commentsDtoOut = comments
                 .stream()
-                .map(CommentMapper::toCommentDto)
+                .map(CommentMapper::toCommentDtoOut)
                 .collect(Collectors.toList());
 
         log.info("🔀 список comments: " + comments + " сконвертирован в commentsDtoOut: " + commentsDtoOut);
         return commentsDtoOut;
     }
 
-    public static Comment toComment(CommentDtoIn commentDtoIn) {
+    public Comment toComment(CommentDtoIn commentDtoIn) {
         Comment comment = Comment.builder()
                 .text(commentDtoIn.getText())
                 .build();
@@ -41,7 +44,7 @@ public class CommentMapper {
         return comment;
     }
 
-    public static List<Comment> toComments(List<CommentDtoIn> commentsDto) {
+    public List<Comment> toComments(List<CommentDtoIn> commentsDto) {
         List<Comment> comments = commentsDto
                 .stream()
                 .map(CommentMapper::toComment)

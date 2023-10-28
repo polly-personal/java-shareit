@@ -14,7 +14,7 @@ import ru.practicum.shareit.request.exception.ItemRequestIdNotFound;
 import javax.validation.ConstraintViolationException;
 
 @Slf4j
-@RestControllerAdvice(basePackageClasses = {ItemController.class})
+@RestControllerAdvice(basePackageClasses = {ItemController.class/*, ItemServiceImpl.class*/})
 public class ItemErrorHandlerController {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)

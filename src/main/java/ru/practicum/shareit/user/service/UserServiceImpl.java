@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserDto updateById(Long id, UserDto updatedUserDto) {
+    public UserDto updateById(long id, UserDto updatedUserDto) {
         String newEmail = updatedUserDto.getEmail();
         String newName = updatedUserDto.getName();
 
@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public String deleteById(Long id) {
+    public String deleteById(long id) {
         userRepository.deleteById(id);
 
         String responseAndLogging;
@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getById(Long id) {
+    public UserDto getById(long id) {
         User issuedUser = userRepository.findById(id).orElseThrow(() -> new UserIdNotFound("введен несуществующий id пользователя: " + id));
 
         log.info("🟦 выдан пользователь: " + issuedUser);
@@ -88,7 +88,7 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> getAll() {
         List<User> issuedUsers = userRepository.findAll();
 
-        if (issuedUsers != null && !issuedUsers.isEmpty()) {
+        if (!issuedUsers.isEmpty()) {
 
             log.info("🟦 выдан список пользователей: " + issuedUsers);
             return UserMapper.toUsersDto(issuedUsers);
@@ -107,7 +107,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public void emailIsExists(String email) throws NoSuchElementException {
+    private void emailIsExists(String email) throws NoSuchElementException {
         if (userRepository.findByEmail(email).isPresent()) {
             throw new UserEmailAlreadyExists("почта \"" + email + "\" уже существует, придумайте другую почту");
         }

@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user.mapper;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -7,9 +8,10 @@ import ru.practicum.shareit.user.dto.UserDto;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@UtilityClass
 @Slf4j
 public class UserMapper {
-    public static UserDto toUserDto(User user) {
+    public UserDto toUserDto(User user) {
         UserDto userDto = UserDto.builder()
                 .id(user.getId())
                 .name(user.getName())
@@ -20,7 +22,7 @@ public class UserMapper {
         return userDto;
     }
 
-    public static List<UserDto> toUsersDto(List<User> users) {
+    public List<UserDto> toUsersDto(List<User> users) {
         List<UserDto> usersDto = users.stream().map(UserMapper::toUserDto).collect(Collectors.toList());
 
         log.info("🔀 список users: " + users + " сконвертирован в usersDto: " + usersDto);
@@ -28,7 +30,7 @@ public class UserMapper {
     }
 
 
-    public static User toUser(UserDto userDto) {
+    public User toUser(UserDto userDto) {
         User user = User.builder()
                 .id(userDto.getId())
                 .name(userDto.getName())
@@ -39,7 +41,7 @@ public class UserMapper {
         return user;
     }
 
-    public static List<User> toUsers(List<UserDto> usersDto) {
+    public List<User> toUsers(List<UserDto> usersDto) {
         List<User> users = usersDto.stream().map(UserMapper::toUser).collect(Collectors.toList());
 
         log.info("🔀 список usersDto: " + usersDto + " сконвертирован в users: " + users);

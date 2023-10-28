@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.mapper;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import ru.practicum.shareit.item.dto.ItemDtoOutForBooking;
 import ru.practicum.shareit.item.dto.ItemDtoIn;
@@ -9,9 +10,10 @@ import ru.practicum.shareit.item.model.Item;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@UtilityClass
 @Slf4j
 public class ItemMapper {
-    public static ItemDtoOut toItemDtoOut(Item item) {
+    public ItemDtoOut toItemDtoOut(Item item) {
         ItemDtoOut itemDtoOut = ItemDtoOut.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -23,7 +25,7 @@ public class ItemMapper {
         return itemDtoOut;
     }
 
-    public static ItemDtoOutForBooking toItemDtoOutForBooking(Item item) {
+    public ItemDtoOutForBooking toItemDtoOutForBooking(Item item) {
         ItemDtoOutForBooking itemDtoOutForBooking = ItemDtoOutForBooking.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -37,7 +39,7 @@ public class ItemMapper {
         return itemDtoOutForBooking;
     }
 
-    public static List<ItemDtoOut> toItemsDtoOut(List<Item> items) {
+    public List<ItemDtoOut> toItemsDtoOut(List<Item> items) {
         List<ItemDtoOut> itemsDto = items
                 .stream()
                 .map(ItemMapper::toItemDtoOut)
@@ -47,7 +49,7 @@ public class ItemMapper {
         return itemsDto;
     }
 
-    public static Item toItem(ItemDtoIn itemDtoIn) {
+    public Item toItem(ItemDtoIn itemDtoIn) {
         Item item = Item.builder()
                 .id(itemDtoIn.getId())
                 .name(itemDtoIn.getName())
@@ -59,7 +61,7 @@ public class ItemMapper {
         return item;
     }
 
-    public static Item toItemDtoOutForBooking(ItemDtoOutForBooking itemDtoOutForBooking) {
+    public Item toItemDtoOutForBooking(ItemDtoOutForBooking itemDtoOutForBooking) {
         Item item = Item.builder()
                 .id(itemDtoOutForBooking.getId())
                 .name(itemDtoOutForBooking.getName())
@@ -73,7 +75,7 @@ public class ItemMapper {
         return item;
     }
 
-    public static List<Item> toItems(List<ItemDtoIn> itemsDtoIn) {
+    public List<Item> toItems(List<ItemDtoIn> itemsDtoIn) {
         List<Item> items = itemsDtoIn
                 .stream()
                 .map(ItemMapper::toItem)

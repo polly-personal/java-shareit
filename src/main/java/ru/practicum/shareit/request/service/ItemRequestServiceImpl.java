@@ -19,7 +19,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private final ItemRequestRepository itemRequestRepository;
 
     @Override
-    public ItemRequestDto create(Long userId, ItemRequestDto itemRequestDto) {
+    public ItemRequestDto create(long userId, ItemRequestDto itemRequestDto) {
         idIsExists(userId);
 
         ItemRequest itemRequestFromDto = ItemRequestMapper.toItemRequest(itemRequestDto);

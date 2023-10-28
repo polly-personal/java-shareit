@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.constant.Status;
+import ru.practicum.shareit.booking.dto.BookingDtoOutForItem;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.item.dto.*;
@@ -22,8 +24,7 @@ import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -39,7 +40,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     @Override
-    public ItemDtoOut create(Long userId, ItemDtoIn itemDtoIn) {
+    public ItemDtoOut create(long userId, ItemDtoIn itemDtoIn) {
         userService.idIsExists(userId);
         itemRequestService.idIsExists(itemDtoIn.getItemRequestId());
 
@@ -55,7 +56,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     @Override
-    public ItemDtoOut updateById(Long ownerId, Long itemId, ItemDtoIn updatedItemDtoIn) {
+    public ItemDtoOut updateById(long ownerId, long itemId, ItemDtoIn updatedItemDtoIn) {
         ownerIdIsLinkedToItemId(ownerId, itemId);
 
         String newName = updatedItemDtoIn.getName();
@@ -93,7 +94,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     @Override
-    public String deleteById(Long itemId) {
+    public String deleteById(long itemId) {
         itemRepository.deleteById(itemId);
 
         String responseAndLogging;
@@ -104,49 +105,87 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDtoOut getById(Long requestorId, Long itemId) {
+    public ItemDtoOut getById(long requestorId, long itemId) {
         Item issuedItem = itemRepository.findById(itemId).orElseThrow(() -> new UserIdNotFound("введен несуществующий id вещи: " + itemId));
 
         ItemDtoOut itemDtoOut = ItemMapper.toItemDtoOut(issuedItem);
 
-        if (requestorId.equals(issuedItem.getOwner().getId())) {
-            itemDtoOut.setLastBooking(bookingRepository.findFirstByItemIdAndStartBeforeOrderByEndDesc(itemId, LocalDateTime.now()));
-            itemDtoOut.setNextBooking(bookingRepository.findFirstByItemIdAndStartAfterAndStatusOrderByStartAsc(itemId,
-                    LocalDateTime.now(), Status.APPROVED));
+        if (requestorId == issuedItem.getOwner().getId()) {
+            Booking lastBooking = bookingRepository.findFirstByItemIdAndStartBeforeOrderByEndDesc(itemId,
+                    LocalDateTime.now()).orElse(null);
+            BookingDtoOutForItem lastBookingDtoOutForItem = null;
+            if (lastBooking != null) {
+                lastBookingDtoOutForItem = BookingMapper.toBookingDtoForItem(lastBooking);
+            }
+
+            Booking nextBooking = bookingRepository.findFirstByItemIdAndStartAfterAndStatusOrderByStartAsc(itemId, LocalDateTime.now(), Status.APPROVED).orElse(null);
+            BookingDtoOutForItem nextBookingDtoOutForItem = null;
+            if (nextBooking != null) {
+                nextBookingDtoOutForItem = BookingMapper.toBookingDtoForItem(nextBooking);
+            }
+
+            itemDtoOut.setLastBooking(lastBookingDtoOutForItem);
+            itemDtoOut.setNextBooking(nextBookingDtoOutForItem);
         }
 
-        itemDtoOut.setComments(CommentMapper.toCommentsDto(commentRepository.findAllByItemId(itemId)));
+        itemDtoOut.setComments(CommentMapper.toCommentsDtoOut(commentRepository.findAllByItemId(itemId)));
 
         log.info("🟦 выдана вещь: " + itemDtoOut);
         return itemDtoOut;
     }
 
     @Override
-    public ItemDtoOutForBooking getByIdForBooking(Long itemId) {
-        Item issuedItem = itemRepository.findById(itemId).orElseThrow(() -> new UserIdNotFound("введен несуществующий id вещи: " + itemId));
+    public ItemDtoOutForBooking getByIdForBooking(long itemId) {
+        Item issuedItem = itemRepository.findById(itemId).orElseThrow(() -> new ItemIdNotFound("введен несуществующий" +
+                " id вещи: " + itemId)); /* требуется статус 404 */
+        if (issuedItem.getAvailable() == false) { /* требуется статус 400 */
+            throw new ItemNotAvailableForBooking("вещь недоступна для бронирования");
+        }
 
         log.info("🟦 выдана вещь (ItemDtoOutForBooking) для BookingService: " + issuedItem);
         return ItemMapper.toItemDtoOutForBooking(issuedItem);
     }
 
     @Override
-    public List<ItemDtoOut> getAllByOwnerId(Long ownerId) {
-        List<Item> issuedItems = itemRepository.findAllByOwnerId(ownerId).orElseThrow(() -> new ItemNoItemsExistsYet("ни одна вещь еще не добавлена, исправьте это: ➕📦"));
+    public List<ItemDtoOut> getAllByOwnerId(long ownerId) {
+        List<Item> items = itemRepository.findAllByOwnerId(ownerId);
+        if (items.isEmpty()) {
+            throw new ItemNoItemsExistsYet("ни одна вещь еще не добавлена, исправьте это: ➕📦");
+        }
+        List<Long> itemIds = new ArrayList<>();
+        items.stream().map(item -> itemIds.add(item.getId())).collect(Collectors.toList());
 
-        List<ItemDtoOut> itemsDtoOut = ItemMapper.toItemsDtoOut(issuedItems);
+        List<BookingDtoOutForItem> lastBookings =
+                bookingRepository.findFirstByItemIdInAndStartBeforeOrderByEndDesc(itemIds, LocalDateTime.now())
+                        .stream()
+                        .map(BookingMapper::toBookingDtoForItem)
+                        .collect(Collectors.toList());
+        Map<Long, BookingDtoOutForItem> lastBookingToItemId = new HashMap<>();
+        for (BookingDtoOutForItem lastBooking : lastBookings) {
+            lastBookingToItemId.put(lastBooking.getItemId(), lastBooking);
+        }
 
-        List<ItemDtoOut> result = itemsDtoOut.stream()
-                .peek(itemDtoOut -> {
-                            Long itemId = itemDtoOut.getId();
-                            itemDtoOut.setLastBooking(bookingRepository.findFirstByItemIdAndStartBeforeOrderByEndDesc(itemId, LocalDateTime.now()));
-                            itemDtoOut.setNextBooking(bookingRepository.findFirstByItemIdAndStartAfterAndStatusOrderByStartAsc(itemId, LocalDateTime.now(), Status.APPROVED));
-                            itemDtoOut.setComments(CommentMapper.toCommentsDto(commentRepository.findAllByItemId(itemId)));
-                        }
-                )
-                .collect(Collectors.toList());
+        List<BookingDtoOutForItem> nextBookings =
+                bookingRepository.findFirstByItemIdInAndStartAfterAndStatusOrderByStartAsc(itemIds, LocalDateTime.now(),
+                                Status.APPROVED)
+                        .stream()
+                        .map(BookingMapper::toBookingDtoForItem)
+                        .collect(Collectors.toList());
+        Map<Long, BookingDtoOutForItem> nextBookingToItemId = new HashMap<>();
+        for (BookingDtoOutForItem nextBooking : nextBookings) {
+            nextBookingToItemId.put(nextBooking.getItemId(), nextBooking);
+        }
 
-        log.info("🟦 выдан список вещей: " + result + ", для владельца с id: " + ownerId);
-        return result;
+        List<ItemDtoOut> itemsDtoOut = ItemMapper.toItemsDtoOut(items)
+                .stream().map(itemDtoOut -> {
+                    itemDtoOut.setLastBooking(lastBookingToItemId.get(itemDtoOut.getId()));
+                    itemDtoOut.setNextBooking(nextBookingToItemId.get(itemDtoOut.getId()));
+
+                    return itemDtoOut;
+                }).collect(Collectors.toList());
+
+        log.info("🟦 выдан список вещей: " + itemsDtoOut + ", для владельца с id: " + ownerId);
+        return itemsDtoOut;
     }
 
     @Override
@@ -174,7 +213,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     @Override
-    public CommentDtoOut createComment(Long commentatorId, Long itemId, CommentDtoIn commentDtoIn) {
+    public CommentDtoOut createComment(long commentatorId, long itemId, CommentDtoIn commentDtoIn) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new UserIdNotFound("введен несуществующий id вещи: " + itemId));
 
         UserDto formerBooker = userService.getById(commentatorId);
@@ -190,16 +229,16 @@ public class ItemServiceImpl implements ItemService {
             comment.setCreated(LocalDateTime.now());
 
             log.info("🟩 создан комментарий: " + comment);
-            return CommentMapper.toCommentDto(commentRepository.save(comment));
+            return CommentMapper.toCommentDtoOut(commentRepository.save(comment));
         }
         throw new ItemCommentatorIdNotHaveCompletedBooking("комментатор не имеет завершенной брони");
     }
 
-    private void ownerIdIsLinkedToItemId(Long ownerId, Long itemId) {
+    private void ownerIdIsLinkedToItemId(long ownerId, long itemId) {
         userService.idIsExists(ownerId);
 
         Item issuedItem = itemRepository.findById(itemId).orElseThrow(() -> new UserIdNotFound("введен несуществующий id вещи: " + itemId));
-        if (!ownerId.equals(issuedItem.getOwner().getId())) {
+        if (ownerId != issuedItem.getOwner().getId()) {
             throw new ItemOwnerIdIsNotLinkedToItemId("id вещи: " + itemId + " не связан с id владельца: " + ownerId);
         }
     }

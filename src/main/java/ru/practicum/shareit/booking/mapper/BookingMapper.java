@@ -1,7 +1,9 @@
 package ru.practicum.shareit.booking.mapper;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
+import ru.practicum.shareit.booking.dto.BookingDtoOutForItem;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.dto.BookingDtoIn;
 import ru.practicum.shareit.item.model.Item;
@@ -9,9 +11,10 @@ import ru.practicum.shareit.item.model.Item;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@UtilityClass
 @Slf4j
 public class BookingMapper {
-    public static BookingDtoOut toBookingDto(Booking booking) {
+    public BookingDtoOut toBookingDto(Booking booking) {
         Item item = booking.getItem();
         BookingDtoOut bookingDtoOut = BookingDtoOut.builder()
                 .id(booking.getId())
@@ -26,7 +29,20 @@ public class BookingMapper {
         return bookingDtoOut;
     }
 
-    public static List<BookingDtoOut> toBookingsDto(List<Booking> bookings) {
+    public BookingDtoOutForItem toBookingDtoForItem(Booking booking) {
+        BookingDtoOutForItem bookingDtoOutForItem = BookingDtoOutForItem.builder()
+                .id(booking.getId())
+                .start(booking.getStart())
+                .end(booking.getEnd())
+                .itemId(booking.getItem().getId())
+                .bookerId(booking.getBooker().getId())
+                .build();
+
+        log.info("🔀 booking: " + booking + " сконвертирован в bookingDtoOutForItem: " + bookingDtoOutForItem);
+        return bookingDtoOutForItem;
+    }
+
+    public List<BookingDtoOut> toBookingsDto(List<Booking> bookings) {
         List<BookingDtoOut> bookingDtoOuts = bookings
                 .stream()
                 .map(BookingMapper::toBookingDto)
@@ -37,7 +53,7 @@ public class BookingMapper {
     }
 
 
-    public static Booking toBooking(BookingDtoIn bookingDtoIn) {
+    public Booking toBooking(BookingDtoIn bookingDtoIn) {
         Booking booking = Booking.builder()
                 .id(bookingDtoIn.getId())
                 .start(bookingDtoIn.getStart())
@@ -48,7 +64,7 @@ public class BookingMapper {
         return booking;
     }
 
-    public static List<Booking> toBookings(List<BookingDtoIn> giveBookingsDto) {
+    public List<Booking> toBookings(List<BookingDtoIn> giveBookingsDto) {
         List<Booking> bookings = giveBookingsDto
                 .stream()
                 .map(BookingMapper::toBooking)

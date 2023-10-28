@@ -6,21 +6,21 @@ import java.util.List;
 
 public interface ItemService {
 
-    ItemDtoOut create(Long userId, ItemDtoIn itemDtoIn);
+    ItemDtoOut create(long userId, ItemDtoIn itemDtoIn);
 
-    ItemDtoOut updateById(Long ownerId, Long id, ItemDtoIn updatedItemDtoIn);
+    ItemDtoOut updateById(long ownerId, long id, ItemDtoIn updatedItemDtoIn);
 
-    String deleteById(Long itemId);
+    String deleteById(long itemId);
 
-    ItemDtoOut getById(Long requestorId, Long itemId);
+    ItemDtoOut getById(long requestorId, long itemId);
 
-    ItemDtoOutForBooking getByIdForBooking(Long itemId);
+    ItemDtoOutForBooking getByIdForBooking(long itemId);
 
-    List<ItemDtoOut> getAllByOwnerId(Long ownerId);
+    List<ItemDtoOut> getAllByOwnerId(long ownerId);
 
     void idIsExists(Long id);
 
     List<ItemDtoOut> searchForUserByParameter(String text);
 
-    CommentDtoOut createComment(Long commentatorId, Long itemId, CommentDtoIn commentDtoIn);
+    CommentDtoOut createComment(long commentatorId, long itemId, CommentDtoIn commentDtoIn);
 }

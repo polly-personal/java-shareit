@@ -8,11 +8,11 @@ public interface UserService {
 
     UserDto create(UserDto userDto);
 
-    UserDto updateById(Long id, UserDto updatedUserDto);
+    UserDto updateById(long id, UserDto updatedUserDto);
 
-    String deleteById(Long id);
+    String deleteById(long id);
 
-    UserDto getById(Long id);
+    UserDto getById(long id);
 
     List<UserDto> getAll();
 
