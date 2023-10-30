@@ -31,6 +31,7 @@ public class Item {
     @Column(name = "is_available", nullable = false)
     private Boolean available;
 
+    @ToString.Exclude
     @JoinColumn(name = "owner_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private User owner;
