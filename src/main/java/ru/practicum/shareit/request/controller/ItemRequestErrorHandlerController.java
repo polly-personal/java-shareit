@@ -7,7 +7,7 @@ import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.request.exception.ItemRequestIdNotFoundException;
+import ru.practicum.shareit.request.exception.ItemRequestIdNotFound;
 
 import javax.validation.ConstraintViolationException;
 
@@ -17,7 +17,7 @@ public class ItemRequestErrorHandlerController {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ItemRequestErrorResponse handelItemRequestIdNotFoundException(ItemRequestIdNotFoundException e) {
+    public ItemRequestErrorResponse handelItemRequestIdNotFoundException(ItemRequestIdNotFound e) {
         log.warn("🟥🖍️ 404 - Not found: \"{}\"", e.getMessage(), e);
         return new ItemRequestErrorResponse("🟥🖍️ " + e.getMessage());
     }

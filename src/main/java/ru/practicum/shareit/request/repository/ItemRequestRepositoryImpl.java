@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.request.model.ItemRequest;
-import ru.practicum.shareit.request.exception.ItemRequestIdNotFoundException;
+import ru.practicum.shareit.request.exception.ItemRequestIdNotFound;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -30,7 +30,7 @@ public class ItemRequestRepositoryImpl implements ItemRequestRepository {
     @Override
     public boolean idIsExists(Long id) {
         if (!requests.containsKey(id)) {
-            throw new ItemRequestIdNotFoundException("введен несуществующий id запроса вещи (ItemRequest): " + id);
+            throw new ItemRequestIdNotFound("введен несуществующий id запроса вещи (ItemRequest): " + id);
         }
         return requests.containsKey(id);
     }

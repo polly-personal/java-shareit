@@ -1,66 +1,76 @@
 package ru.practicum.shareit.booking.mapper;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import ru.practicum.shareit.booking.dto.BookingDtoOut;
+import ru.practicum.shareit.booking.dto.BookingDtoOutForItem;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingDtoIn;
+import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@UtilityClass
 @Slf4j
 public class BookingMapper {
-    public static BookingDto toBookingDto(Booking booking) {
-        BookingDto bookingDto = new BookingDto(
-                booking.getId(),
-                booking.getStart(),
-                booking.getEnd(),
-                booking.getItemId(),
-                booking.getBooker(),
-                booking.getStatus(),
-                booking.getOwnerItem(),
-                booking.getCustomerReview()
-        );
-        log.info("🔀 booking: " + booking + " сконвертирован в bookingDto: " + bookingDto);
+    public BookingDtoOut toBookingDto(Booking booking) {
+        Item item = booking.getItem();
+        BookingDtoOut bookingDtoOut = BookingDtoOut.builder()
+                .id(booking.getId())
+                .start(booking.getStart())
+                .end(booking.getEnd())
+                .status(booking.getStatus())
+                .booker(new BookingDtoOut.Booker(booking.getBooker().getId()))
+                .item(new BookingDtoOut.Item(item.getId(), item.getName()))
+                .build();
 
-        return bookingDto;
+        log.info("🔀 booking: " + booking + " сконвертирован в getBookingDto: " + bookingDtoOut);
+        return bookingDtoOut;
     }
 
-    public static List<BookingDto> toBookingsDto(List<Booking> bookings) {
-        List<BookingDto> bookingsDto = bookings
+    public BookingDtoOutForItem toBookingDtoForItem(Booking booking) {
+        BookingDtoOutForItem bookingDtoOutForItem = BookingDtoOutForItem.builder()
+                .id(booking.getId())
+                .start(booking.getStart())
+                .end(booking.getEnd())
+                .itemId(booking.getItem().getId())
+                .bookerId(booking.getBooker().getId())
+                .build();
+
+        log.info("🔀 booking: " + booking + " сконвертирован в bookingDtoOutForItem: " + bookingDtoOutForItem);
+        return bookingDtoOutForItem;
+    }
+
+    public List<BookingDtoOut> toBookingsDto(List<Booking> bookings) {
+        List<BookingDtoOut> bookingDtoOuts = bookings
                 .stream()
                 .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
 
-        log.info("🔀 список bookings: " + bookings + " сконвертирован в bookingsDto: " + bookingsDto);
-
-        return bookingsDto;
+        log.info("🔀 список bookings: " + bookings + " сконвертирован в getBookingDtos: " + bookingDtoOuts);
+        return bookingDtoOuts;
     }
 
 
-    public static Booking toBooking(BookingDto bookingDto) {
-        Booking booking = new Booking(
-                bookingDto.getId(),
-                bookingDto.getStart(),
-                bookingDto.getEnd(),
-                bookingDto.getItemId(),
-                bookingDto.getBooker(),
-                bookingDto.getStatus(),
-                bookingDto.getOwnerItem(),
-                bookingDto.getCustomerReview()
-        );
-        log.info("🔀 bookingDto: " + bookingDto + " сконвертирован в booking: " + booking);
+    public Booking toBooking(BookingDtoIn bookingDtoIn) {
+        Booking booking = Booking.builder()
+                .id(bookingDtoIn.getId())
+                .start(bookingDtoIn.getStart())
+                .end(bookingDtoIn.getEnd())
+                .build();
 
+        log.info("🔀 giveBookingDto: " + bookingDtoIn + " сконвертирован в booking: " + booking);
         return booking;
     }
 
-    public static List<Booking> toBookings(List<BookingDto> bookingsDto) {
-        List<Booking> bookings = bookingsDto
+    public List<Booking> toBookings(List<BookingDtoIn> giveBookingsDto) {
+        List<Booking> bookings = giveBookingsDto
                 .stream()
                 .map(BookingMapper::toBooking)
                 .collect(Collectors.toList());
 
-        log.info("🔀 список bookingsDto: " + bookingsDto + " сконвертирован в bookings: " + bookings);
-
+        log.info("🔀 список giveBookingsDto: " + giveBookingsDto + " сконвертирован в bookings: " + bookings);
         return bookings;
     }
 }

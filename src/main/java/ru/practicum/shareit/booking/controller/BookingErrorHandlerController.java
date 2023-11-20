@@ -7,19 +7,52 @@ import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.booking.exception.BookingIdNotFoundException;
+import ru.practicum.shareit.booking.exception.BookingUnsupportedState;
+import ru.practicum.shareit.booking.exception.*;
+import ru.practicum.shareit.item.controller.ItemErrorResponse;
+import ru.practicum.shareit.item.exception.ItemIdNotFound;
+import ru.practicum.shareit.item.exception.ItemNotAvailableForBooking;
+import ru.practicum.shareit.item.exception.ItemOwnerIdIsNotLinkedToItemId;
 
 import javax.validation.ConstraintViolationException;
 
 @Slf4j
-@RestControllerAdvice(basePackageClasses = BookingController.class)
+@RestControllerAdvice(basePackageClasses = {BookingController.class/*, ItemServiceImpl.class*/})
 public class BookingErrorHandlerController {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public BookingErrorResponse handelBookingIdNotFoundException(BookingIdNotFoundException e) {
+    public BookingErrorResponse handelBookingIdNotFoundException(BookingIdNotFound e) {
         log.warn("🟥📗 404 - Not found: \"{}\"", e.getMessage(), e);
         return new BookingErrorResponse("🟥📗 " + e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public BookingErrorResponse handelBookingRequestorIdNotLinkedToBookerIdOrOwnerId(BookingRequestorIdNotLinkedToBookerIdOrOwnerId e) {
+        log.warn("🟥📗 404 - Not found: \"{}\"", e.getMessage(), e);
+        return new BookingErrorResponse("🟥📗 " + e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public BookingErrorResponse handelBookingBookerIdIsOwnerId(BookingBookerIdIsOwnerId e) {
+        log.warn("🟥📗 404 - Not found: \"{}\"", e.getMessage(), e);
+        return new BookingErrorResponse("🟥📗 " + e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public BookingErrorResponse handelOwnerIdIsNotLinkedToItemId(ItemOwnerIdIsNotLinkedToItemId e) {
+        log.warn("🟥📦 404 - Not found: \"{}\"", e.getMessage(), e);
+        return new BookingErrorResponse("🟥📦 " + e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public BookingErrorResponse handelItemIdNotFound(ItemIdNotFound e) {
+        log.warn("🟥📦 404 - Not found: \"{}\"", e.getMessage(), e);
+        return new BookingErrorResponse("🟥📦 " + e.getMessage());
     }
 
     @ExceptionHandler
@@ -28,6 +61,42 @@ public class BookingErrorHandlerController {
         log.warn("🟥📗 400 - Bad Request: \"{}\"", e.getMessage(), e);
         return new BookingErrorResponse("🟥📗 некорректный json: " + e.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public BookingErrorResponse handelBookingIncorrectDatesException(BookingIncorrectDates e) {
+        log.warn("🟥📗 400 - Bad Request: \"{}\"", e.getMessage(), e);
+        return new BookingErrorResponse("🟥📗 некорректный json: " + e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public BookingErrorResponse handelBookingNotAvailableException(BookingNotAvailable e) {
+        log.warn("🟥📗 400 - Bad Request: \"{}\"", e.getMessage(), e);
+        return new BookingErrorResponse("🟥📗 некорректный json: " + e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public BookingErrorResponse handelBookingStatusAlreadyApproved(BookingStatusAlreadyApproved e) {
+        log.warn("🟥📗 400 - Bad Request: \"{}\"", e.getMessage(), e);
+        return new BookingErrorResponse("🟥📗 некорректный запрос: " + e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public BookingErrorResponse handelBookingUnsupportedState(BookingUnsupportedState e) {
+        log.warn("🟥📗 400 - Bad Request: \"{}\"", e.getMessage(), e);
+        return new BookingErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ItemErrorResponse handelItemNotAvailableForBooking(ItemNotAvailableForBooking e) {
+        log.warn("🟥📦 400 - Bad Request: \"{}\"", e.getMessage(), e);
+        return new ItemErrorResponse("🟥📦 " + e.getMessage());
+    }
+
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
