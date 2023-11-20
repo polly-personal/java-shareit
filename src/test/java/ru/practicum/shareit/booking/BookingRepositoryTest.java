@@ -26,7 +26,7 @@ import java.util.List;
 @DisplayName("UserRepositoryTest должен ")
 @DataJpaTest
 public class BookingRepositoryTest {
-
+/*test for github test*/
     @Autowired
     private BookingRepository bookingRepository;
     @Autowired
