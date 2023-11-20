@@ -19,24 +19,11 @@ public class ItemMapper {
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
+                .requestId(item.getItemRequest() != null ? item.getItemRequest().getId() : null)
                 .build();
 
-        log.info("🔀 item: " + item + " сконвертирован в giveAndGetItemDto: " + itemDtoOut);
+        log.info("🔀 item: " + item + " сконвертирован в itemDtoOut: " + itemDtoOut);
         return itemDtoOut;
-    }
-
-    public ItemDtoOutForBooking toItemDtoOutForBooking(Item item) {
-        ItemDtoOutForBooking itemDtoOutForBooking = ItemDtoOutForBooking.builder()
-                .id(item.getId())
-                .name(item.getName())
-                .description(item.getDescription())
-                .available(item.getAvailable())
-                .owner(item.getOwner())
-                .itemRequest(item.getItemRequest())
-                .build();
-
-        log.info("🔀 item: " + item + " сконвертирован в itemDtoOutForBooking: " + itemDtoOutForBooking);
-        return itemDtoOutForBooking;
     }
 
     public List<ItemDtoOut> toItemsDtoOut(List<Item> items) {
@@ -57,8 +44,32 @@ public class ItemMapper {
                 .available(itemDtoIn.getAvailable())
                 .build();
 
-        log.info("🔀 itemDto: " + itemDtoIn + " сконвертирован в item: " + item);
+        log.info("🔀 itemDtoIn: " + itemDtoIn + " сконвертирован в item: " + item);
         return item;
+    }
+
+    public List<Item> toItems(List<ItemDtoIn> itemsDtoIn) {
+        List<Item> items = itemsDtoIn
+                .stream()
+                .map(ItemMapper::toItem)
+                .collect(Collectors.toList());
+
+        log.info("🔀 список itemsDtoIn: " + itemsDtoIn + " сконвертирован в items: " + items);
+        return items;
+    }
+
+    public ItemDtoOutForBooking toItemDtoOutForBooking(Item item) {
+        ItemDtoOutForBooking itemDtoOutForBooking = ItemDtoOutForBooking.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .owner(item.getOwner())
+                .itemRequest(item.getItemRequest())
+                .build();
+
+        log.info("🔀 item: " + item + " сконвертирован в itemDtoOutForBooking: " + itemDtoOutForBooking);
+        return itemDtoOutForBooking;
     }
 
     public Item toItemDtoOutForBooking(ItemDtoOutForBooking itemDtoOutForBooking) {
@@ -73,15 +84,5 @@ public class ItemMapper {
 
         log.info("🔀 itemDtoOutForBooking: " + itemDtoOutForBooking + " сконвертирован в item: " + item);
         return item;
-    }
-
-    public List<Item> toItems(List<ItemDtoIn> itemsDtoIn) {
-        List<Item> items = itemsDtoIn
-                .stream()
-                .map(ItemMapper::toItem)
-                .collect(Collectors.toList());
-
-        log.info("🔀 список itemsDtoIn: " + itemsDtoIn + " сконвертирован в items: " + items);
-        return items;
     }
 }

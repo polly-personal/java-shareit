@@ -9,6 +9,7 @@ import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -44,22 +45,26 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDtoOut getById(@RequestHeader("X-Sharer-User-Id") @Positive @Min(1) long requestorId,
+    public ItemDtoOut getById(@RequestHeader("X-Sharer-User-Id") @Positive @Min(1) long requesterId,
                               @PathVariable(name = "itemId") @Positive @Min(1) long itemId) {
         log.info("🟫 GET /items/{}", itemId);
-        return itemService.getById(requestorId, itemId);
+        return itemService.getById(requesterId, itemId);
     }
 
     @GetMapping
-    public List<ItemDtoOut> getAllByOwnerId(@RequestHeader("X-Sharer-User-Id") @Positive @Min(1) long ownerId) {
-        log.info("🟫 GET /items");
-        return itemService.getAllByOwnerId(ownerId);
+    public List<ItemDtoOut> getAllByOwnerId(@RequestHeader("X-Sharer-User-Id") @Positive @Min(1) long ownerId,
+                                            @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                            @RequestParam(defaultValue = "10") @Positive @Min(1) int size) {
+        log.info("🟫 GET /items?from={}&size={}", from, size);
+        return itemService.getAllByOwnerId(ownerId, from, size);
     }
 
     @GetMapping("/search")
-    public List<ItemDtoOut> searchForUserByParameter(@RequestParam String text) {
-        log.info("🟫 GET /items/search?text={}", text);
-        return itemService.searchForUserByParameter(text);
+    public List<ItemDtoOut> searchForUserByParameter(@RequestParam String text,
+                                                     @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                                     @RequestParam(defaultValue = "10") @Positive @Min(1) int size) {
+        log.info("🟫 GET /items/search?text={}&from={}&size={}", text, from, size);
+        return itemService.searchForUserByParameter(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")

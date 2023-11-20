@@ -12,15 +12,15 @@ public interface ItemService {
 
     String deleteById(long itemId);
 
-    ItemDtoOut getById(long requestorId, long itemId);
+    ItemDtoOut getById(long requesterId, long itemId);
 
     ItemDtoOutForBooking getByIdForBooking(long itemId);
 
-    List<ItemDtoOut> getAllByOwnerId(long ownerId);
+    List<ItemDtoOut> getAllByOwnerId(long ownerId, int from, int size);
 
     void idIsExists(Long id);
 
-    List<ItemDtoOut> searchForUserByParameter(String text);
+    List<ItemDtoOut> searchForUserByParameter(String text, int from, int size);
 
     CommentDtoOut createComment(long commentatorId, long itemId, CommentDtoIn commentDtoIn);
 }

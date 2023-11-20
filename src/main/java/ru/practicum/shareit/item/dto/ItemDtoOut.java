@@ -32,5 +32,5 @@ public class ItemDtoOut {
 
     private List<CommentDtoOut> comments;
 
-    private Long itemRequestId;
+    private Long requestId;
 }

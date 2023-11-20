@@ -29,7 +29,7 @@ public class BookingErrorHandlerController {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public BookingErrorResponse handelBookingRequestorIdNotLinkedToBookerIdOrOwnerId(BookingRequestorIdNotLinkedToBookerIdOrOwnerId e) {
+    public BookingErrorResponse handelBookingRequesterIdNotLinkedToBookerIdOrOwnerId(BookingRequesterIdNotLinkedToBookerIdOrOwnerId e) {
         log.warn("🟥📗 404 - Not found: \"{}\"", e.getMessage(), e);
         return new BookingErrorResponse("🟥📗 " + e.getMessage());
     }

@@ -53,4 +53,15 @@ public class CommentMapper {
         log.info("🔀 список commentsDto: " + commentsDto + " сконвертирован в comments: " + comments);
         return comments;
     }
+
+    public CommentDtoIn toCommentDtoIn(Comment comment) {
+        CommentDtoIn commentDtoIn = CommentDtoIn.builder()
+                .id(comment.getId())
+                .text(comment.getText())
+                .authorName(comment.getAuthor().getName())
+                .build();
+
+        log.info("🔀 comment: " + comment + " сконвертирован в commentDtoIn: " + commentDtoIn);
+        return commentDtoIn;
+    }
 }
