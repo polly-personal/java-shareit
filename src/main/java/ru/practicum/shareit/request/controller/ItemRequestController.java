@@ -26,16 +26,17 @@ import java.util.List;
 public class ItemRequestController {
     private final ItemRequestService itemRequestService;
     private final UserService userService;
+    private static final String requestHeaderUserId = "X-Sharer-User-Id";
 
     @PostMapping
-    public ItemRequestDtoOut create(@RequestHeader("X-Sharer-User-Id") @Positive @Min(1) long userId,
+    public ItemRequestDtoOut create(@RequestHeader(requestHeaderUserId) @Positive @Min(1) long userId,
                                     @Validated(CreateValidation.class) @RequestBody ItemRequestDtoIn itemRequestDtoIn) {
         log.info("🟫 POST /requests");
         return itemRequestService.create(userId, itemRequestDtoIn);
     }
 
     @GetMapping("/{itemRequestId}")
-    public ItemRequestDtoOut getById(@RequestHeader("X-Sharer-User-Id") @Positive @Min(1) long userId,
+    public ItemRequestDtoOut getById(@RequestHeader(requestHeaderUserId) @Positive @Min(1) long userId,
                                      @PathVariable @Positive @Min(1) long itemRequestId) {
         log.info("🟫 GET /requests/{}", itemRequestId);
         userService.idIsExists(userId);
@@ -43,13 +44,13 @@ public class ItemRequestController {
     }
 
     @GetMapping
-    public List<ItemRequestDtoOut> getAllForRequester(@RequestHeader("X-Sharer-User-Id") @Positive @Min(1) long userId) {
+    public List<ItemRequestDtoOut> getAllForRequester(@RequestHeader(requestHeaderUserId) @Positive @Min(1) long userId) {
         log.info("🟫 GET /requests");
         return itemRequestService.getAllForRequester(userId);
     }
 
     @GetMapping("/all")
-    public List<ItemRequestDtoOut> getAllOtherUsersRequests(@RequestHeader("X-Sharer-User-Id") @Positive @Min(1) long userId,
+    public List<ItemRequestDtoOut> getAllOtherUsersRequests(@RequestHeader(requestHeaderUserId) @Positive @Min(1) long userId,
                                                             @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                                             @RequestParam(defaultValue = "10") @Positive @Min(1) int size) {
         log.info("🟫 GET /requests/all");

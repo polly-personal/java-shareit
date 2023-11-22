@@ -22,5 +22,5 @@ public interface ItemService {
 
     List<ItemDtoOut> searchForUserByParameter(String text, int from, int size);
 
-    CommentDtoOut createComment(long commentatorId, long itemId, CommentDtoIn commentDtoIn);
+    CommentDtoOut createComment(long bookerId, long itemId, CommentDtoIn commentDtoIn);
 }

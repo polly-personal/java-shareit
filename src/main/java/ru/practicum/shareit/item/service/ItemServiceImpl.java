@@ -3,7 +3,6 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -213,31 +212,28 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDtoOut> searchForUserByParameter(String text, int from, int size) {
-        PageRequest pageRequest = PageRequest.of(from, size);
-
-        Page<Item> issuedItems = new PageImpl<>(new ArrayList<>());
-
         if (text != null && !text.isBlank()) {
+            PageRequest pageRequest = PageRequest.of(from, size);
 
-            issuedItems =
-                    itemRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailableTrue(text, text, pageRequest);
-            log.info("🟦🟦 выдан список вещей: " + issuedItems + ", по поиску (параметру): " + text);
+            Page<Item> issuedItems = itemRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailableTrue(text, text, pageRequest);
+            log.info("🟦🟦 выдан список вещей: " + issuedItems + ", по поиску (параметру): \"" + text + "\"");
+
+            return ItemMapper.toItemsDtoOut(issuedItems.toList());
         } else {
+            log.info("🟦🟦 выдан ПУСТОЙ список вещей: [], по поиску (параметру): \"" + text + "\"");
 
-            log.info("🟦🟦 выдан ПУСТОЙ список вещей: " + issuedItems + ", по поиску (параметру): \"" + text + "\"");
+            return Collections.emptyList();
         }
-
-        return ItemMapper.toItemsDtoOut(issuedItems.toList());
     }
 
     @Transactional
     @Override
-    public CommentDtoOut createComment(long commentatorId, long itemId, CommentDtoIn commentDtoIn) {
-        UserDto formerBooker = userService.getById(commentatorId);
+    public CommentDtoOut createComment(long bookerId, long itemId, CommentDtoIn commentDtoIn) {
+        UserDto formerBooker = userService.getById(bookerId);
 
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new UserIdNotFound("введен несуществующий id вещи: " + itemId));
 
-        List<Booking> bookings = bookingRepository.findAllByBookerIdAndItemIdAndEndBeforeAndStatusEquals(commentatorId, itemId, LocalDateTime.now(), Status.APPROVED);
+        List<Booking> bookings = bookingRepository.findAllByBookerIdAndItemIdAndEndBeforeAndStatusEquals(bookerId, itemId, LocalDateTime.now(), Status.APPROVED);
 
         if (!bookings.isEmpty()) {
 

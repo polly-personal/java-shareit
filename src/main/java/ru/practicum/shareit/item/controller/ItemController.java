@@ -22,16 +22,17 @@ import java.util.List;
 @RestController
 public class ItemController {
     private final ItemService itemService;
+    private static final String requestHeaderUserId = "X-Sharer-User-Id";
 
     @PostMapping
-    public ItemDtoOut create(@RequestHeader("X-Sharer-User-Id") @Positive @Min(1) long userId,
+    public ItemDtoOut create(@RequestHeader(requestHeaderUserId) @Positive @Min(1) long userId,
                              @Validated(CreateValidation.class) @RequestBody ItemDtoIn itemDtoIn) {
         log.info("🟫 POST /items");
         return itemService.create(userId, itemDtoIn);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDtoOut updateById(@RequestHeader("X-Sharer-User-Id") @Positive @Min(1) long ownerId,
+    public ItemDtoOut updateById(@RequestHeader(requestHeaderUserId) @Positive @Min(1) long ownerId,
                                  @PathVariable(name = "itemId") @Positive @Min(1) long itemId,
                                  @RequestBody ItemDtoIn updatedItemDtoIn) {
         log.info("🟫 PATCH /items/{}", itemId);
@@ -45,14 +46,14 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDtoOut getById(@RequestHeader("X-Sharer-User-Id") @Positive @Min(1) long requesterId,
+    public ItemDtoOut getById(@RequestHeader(requestHeaderUserId) @Positive @Min(1) long userId,
                               @PathVariable(name = "itemId") @Positive @Min(1) long itemId) {
         log.info("🟫 GET /items/{}", itemId);
-        return itemService.getById(requesterId, itemId);
+        return itemService.getById(userId, itemId);
     }
 
     @GetMapping
-    public List<ItemDtoOut> getAllByOwnerId(@RequestHeader("X-Sharer-User-Id") @Positive @Min(1) long ownerId,
+    public List<ItemDtoOut> getAllByOwnerId(@RequestHeader(requestHeaderUserId) @Positive @Min(1) long ownerId,
                                             @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                             @RequestParam(defaultValue = "10") @Positive @Min(1) int size) {
         log.info("🟫 GET /items?from={}&size={}", from, size);
@@ -68,10 +69,10 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDtoOut createComment(@RequestHeader("X-Sharer-User-Id") @Positive @Min(1) long commentatorId,
+    public CommentDtoOut createComment(@RequestHeader(requestHeaderUserId) @Positive @Min(1) long bookerId,
                                        @PathVariable(name = "itemId") @Positive @Min(1) long itemId,
                                        @Validated(CreateValidation.class) @RequestBody CommentDtoIn commentDtoIn) {
         log.info("🟫 POST /items/{}/comment", itemId);
-        return itemService.createComment(commentatorId, itemId, commentDtoIn);
+        return itemService.createComment(bookerId, itemId, commentDtoIn);
     }
 }
