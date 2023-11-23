@@ -34,16 +34,16 @@ public class UserServiceImplTest {
     @InjectMocks
     private UserServiceImpl userServiceImpl;
 
-    User user;
+    private User user;
 
     @BeforeEach
-    void initEntity() {
+    public void initEntity() {
         user = User.builder().id(1L).name("test_name_1").email("test_email_1").build();
     }
 
     @DisplayName("сохранять пользователя")
     @Test
-    void create_whenSuccessInvoked_thenCreatedUserIsReturned() {
+    public void create_whenSuccessInvoked_thenCreatedUserIsReturned() {
         when(userRepository.save(any())).thenReturn(user);
 
         UserDto savedUserDto = UserMapper.toUserDto(user);
@@ -54,7 +54,7 @@ public class UserServiceImplTest {
 
     @DisplayName("НЕ сохранять пользователя, если такой email уже существует в бд")
     @Test
-    void create_whenEmailAlreadyExist_thenCreatedUserIsNotReturned() {
+    public void create_whenEmailAlreadyExist_thenCreatedUserIsNotReturned() {
         UserDto duplicateEmailUserDto = UserDto.builder().name("test_name_2").email("test_email_1").build();
 
         when(userRepository.save(any())).thenThrow(UserEmailAlreadyExists.class);
@@ -64,7 +64,7 @@ public class UserServiceImplTest {
 
     @DisplayName("обновлять пользователя по полю \"id\"")
     @Test
-    void updateById_whenSuccessInvoked_thenUpdatedUserIsReturned() {
+    public void updateById_whenSuccessInvoked_thenUpdatedUserIsReturned() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
         UserDto updatedUserDto = UserDto.builder().name("test_updated-name_1").email("test_updated-email_1").build();
@@ -80,7 +80,7 @@ public class UserServiceImplTest {
 
     @DisplayName("НЕ обновлять пользователя по полю \"id\", если этот id не найден в бд")
     @Test
-    void updateById_whenIdNotFound_thenUpdatedUserIsNotReturned() {
+    public void updateById_whenIdNotFound_thenUpdatedUserIsNotReturned() {
         UserDto updatedUserDto = UserDto.builder().name("test_updated-name_1").email("test_updated-email_1").build();
 
         when(userRepository.findById(anyLong())).thenThrow(UserIdNotFound.class);
@@ -90,7 +90,7 @@ public class UserServiceImplTest {
 
     @DisplayName("удалять пользователя по полю \"id\"")
     @Test
-    void deleteById_whenSuccessInvoked_thenStringResponseIsReturned() {
+    public void deleteById_whenSuccessInvoked_thenStringResponseIsReturned() {
         doNothing().when(userRepository).deleteById(anyLong());
 
         String returnedResponse = userServiceImpl.deleteById(anyLong());
@@ -100,7 +100,7 @@ public class UserServiceImplTest {
 
     @DisplayName("выдавать пользователя по полю \"id\"")
     @Test
-    void getById_whenSuccessInvoked_thenIssuedUserIsReturned() {
+    public void getById_whenSuccessInvoked_thenIssuedUserIsReturned() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
         UserDto returnedUserDto = userServiceImpl.getById(anyLong());
@@ -111,7 +111,7 @@ public class UserServiceImplTest {
 
     @DisplayName("НЕ выдавать пользователя по полю \"id\", если этот id не найден в бд")
     @Test
-    void getById_whenIdNotFound_thenIssuedUserIsNotReturned() {
+    public void getById_whenIdNotFound_thenIssuedUserIsNotReturned() {
         when(userRepository.findById(anyLong())).thenThrow(UserIdNotFound.class);
 
         Assertions.assertThrows(UserIdNotFound.class, () -> userServiceImpl.getById(anyLong()));
@@ -119,7 +119,7 @@ public class UserServiceImplTest {
 
     @DisplayName("выдавать всех пользователей")
     @Test
-    void getAll_whenSuccessInvoked_thenIssuedUsersIsReturned() {
+    public void getAll_whenSuccessInvoked_thenIssuedUsersIsReturned() {
         User secondUser = User.builder().id(2L).name("test_name_2").email("test_email_2").build();
 
         when(userRepository.findAll()).thenReturn(List.of(user, secondUser));
@@ -132,7 +132,7 @@ public class UserServiceImplTest {
 
     @DisplayName("проверять пользователя на наличие в бд по полю \"id\" (результат: найден)")
     @Test
-    void idIsExists_whenSuccessInvoked_thenExceptionIsNotReturned() {
+    public void idIsExists_whenSuccessInvoked_thenExceptionIsNotReturned() {
         when(userRepository.existsById(anyLong())).thenReturn(true);
 
         userServiceImpl.idIsExists(anyLong());
@@ -140,7 +140,7 @@ public class UserServiceImplTest {
 
     @DisplayName("проверять пользователя на наличие в бд по полю \"id\" (результат: НЕ найден)")
     @Test
-    void idIsExists_whenIdNotFound_thenExceptionIsReturned() {
+    public void idIsExists_whenIdNotFound_thenExceptionIsReturned() {
         when(userRepository.existsById(anyLong())).thenThrow(UserIdNotFound.class);
 
         Assertions.assertThrows(UserIdNotFound.class, () -> userServiceImpl.idIsExists(anyLong()));

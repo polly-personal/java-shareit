@@ -28,21 +28,21 @@ public class ItemRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    User owner = User.builder().name("test_name_1").email("test_email_1").build();
-    Item item = Item.builder().name("test_name_1").description("test_description_1").available(true).owner(owner).build();
+    private User owner = User.builder().name("test_name_1").email("test_email_1").build();
+    private Item item = Item.builder().name("test_name_1").description("test_description_1").available(true).owner(owner).build();
 
-    int from = 0;
-    int size = 10;
-    PageRequest pageRequest = PageRequest.of(from, size);
+    private int from = 0;
+    private int size = 10;
+    private PageRequest pageRequest = PageRequest.of(from, size);
 
     @BeforeEach
-    void saveUser() {
+    public void saveUser() {
         userRepository.save(owner);
     }
 
     @DisplayName("сохранять предмет")
     @Test
-    void save_whenSuccessInvoked_thenSavedItemIsReturned() {
+    public void save_whenSuccessInvoked_thenSavedItemIsReturned() {
         Assertions.assertNull(item.getId());
 
         Item returnedItem = itemRepository.save(item);
@@ -51,7 +51,7 @@ public class ItemRepositoryTest {
 
     @DisplayName("НЕ сохранять предмет, если поле \"name\" == null")
     @Test
-    void save_whenNameIsNull_thenSavedItemIsNotReturned() {
+    public void save_whenNameIsNull_thenSavedItemIsNotReturned() {
         item.setName(null);
 
         Assertions.assertThrows(DataIntegrityViolationException.class, () -> itemRepository.save(item));
@@ -59,14 +59,14 @@ public class ItemRepositoryTest {
 
     @DisplayName("НЕ сохранять предмет, если поле \"description\" == null")
     @Test
-    void save_whenDescriptionIsNull_thenSavedItemIsNotReturned() {
+    public void save_whenDescriptionIsNull_thenSavedItemIsNotReturned() {
         item.setDescription(null);
         Assertions.assertThrows(DataIntegrityViolationException.class, () -> itemRepository.save(item));
     }
 
     @DisplayName("НЕ сохранять предмет, если длина поля \"description\" > 512")
     @Test
-    void save_whenDescriptionLengthIsMoreThen512_thenSavedItemIsNotReturned() {
+    public void save_whenDescriptionLengthIsMoreThen512_thenSavedItemIsNotReturned() {
         String description = "test_description_1";
         item.setDescription(description.repeat(50));
         Assertions.assertThrows(DataIntegrityViolationException.class, () -> itemRepository.save(item));
@@ -74,7 +74,7 @@ public class ItemRepositoryTest {
 
     @DisplayName("НЕ сохранять предмет, если поле \"available\" == null")
     @Test
-    void save_whenEmailIsNotUnique_thenSavedUserIsNotReturned() {
+    public void save_whenEmailIsNotUnique_thenSavedUserIsNotReturned() {
         item.setAvailable(null);
 
         Assertions.assertThrows(DataIntegrityViolationException.class, () -> itemRepository.save(item));
@@ -82,7 +82,7 @@ public class ItemRepositoryTest {
 
     @DisplayName("выдавать все предметы владельца по полю \"owner.id\"")
     @Test
-    void findAllByOwnerId_whenSuccessInvoked_thenFoundItemsIsReturned() {
+    public void findAllByOwnerId_whenSuccessInvoked_thenFoundItemsIsReturned() {
         itemRepository.save(item);
 
         Page<Item> returnedItems = itemRepository.findAllByOwnerId(owner.getId(), pageRequest);
@@ -95,7 +95,7 @@ public class ItemRepositoryTest {
     @DisplayName("выдавать все предметы владельца по слову, содержащемуся в поле \"name\" или \"description\", " +
             "игнорируя регистр")
     @Test
-    void findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailableTrue_whenSuccessInvoked_thenFoundItemsIsReturned() {
+    public void findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailableTrue_whenSuccessInvoked_thenFoundItemsIsReturned() {
         item.setName("test_name_1 and 1A");
         itemRepository.save(item);
         Item itemOther = Item.builder().name("test_name_2").description("test_description_2 and 1a").available(true).owner(owner).build();

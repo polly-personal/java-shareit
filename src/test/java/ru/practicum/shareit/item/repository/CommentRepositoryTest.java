@@ -30,14 +30,14 @@ public class CommentRepositoryTest {
     @Autowired
     private CommentRepository commentRepository;
 
-    User user = User.builder().name("test_name_1").email("test_email_1").build();
-    User author = User.builder().name("test_name_2").email("test_email_2").build();
-    Item item = Item.builder().name("test_name_1").description("test_description_1").available(true).owner(user).build();
+    private User user = User.builder().name("test_name_1").email("test_email_1").build();
+    private User author = User.builder().name("test_name_2").email("test_email_2").build();
+    private Item item = Item.builder().name("test_name_1").description("test_description_1").available(true).owner(user).build();
 
-    Comment comment = Comment.builder().text("test_text_1").item(item).author(author).created(LocalDateTime.now()).build();
+    private Comment comment = Comment.builder().text("test_text_1").item(item).author(author).created(LocalDateTime.now()).build();
 
     @BeforeEach
-    void saveUsersAndItem() {
+    public void saveUsersAndItem() {
         userRepository.save(user);
         userRepository.save(author);
         itemRepository.save(item);
@@ -45,14 +45,14 @@ public class CommentRepositoryTest {
 
     @DisplayName("сохранять комментарий")
     @Test
-    void save_whenSuccessInvoked_thenSavedCommentsIsReturned() {
+    public void save_whenSuccessInvoked_thenSavedCommentsIsReturned() {
         Comment returnedComment = commentRepository.save(comment);
         Assertions.assertEquals(comment, returnedComment);
     }
 
     @DisplayName("НЕ сохранять комментарий, если поле \"text\" == null")
     @Test
-    void save_whenTextIsNull_thenSavedCommentsIsNotReturned() {
+    public void save_whenTextIsNull_thenSavedCommentsIsNotReturned() {
         comment.setText(null);
 
         Assertions.assertThrows(DataIntegrityViolationException.class, () -> commentRepository.save(comment));
@@ -60,7 +60,7 @@ public class CommentRepositoryTest {
 
     @DisplayName("НЕ сохранять комментарий, если длина поля \"text\" > 512")
     @Test
-    void save_whenTextLengthIsMoreThen512_thenSavedCommentsIsNotReturned() {
+    public void save_whenTextLengthIsMoreThen512_thenSavedCommentsIsNotReturned() {
         String text = "test_text_1";
         comment.setText(text.repeat(50));
         Assertions.assertThrows(DataIntegrityViolationException.class, () -> commentRepository.save(comment));
@@ -68,7 +68,7 @@ public class CommentRepositoryTest {
 
     @DisplayName("НЕ сохранять комментарий, если поле \"created\" == null")
     @Test
-    void save_whenCreatedIsNull_thenSavedCommentsIsNotReturned() {
+    public void save_whenCreatedIsNull_thenSavedCommentsIsNotReturned() {
         comment.setCreated(null);
 
         Assertions.assertThrows(DataIntegrityViolationException.class, () -> commentRepository.save(comment));
@@ -76,7 +76,7 @@ public class CommentRepositoryTest {
 
     @DisplayName("выдавать все комментарии по полю \"item.id\"")
     @Test
-    void findAllByItemId_whenSuccessInvoked_thenFoundCommentsIsReturned() {
+    public void findAllByItemId_whenSuccessInvoked_thenFoundCommentsIsReturned() {
         commentRepository.save(comment);
 
         List<Comment> returnedComment = commentRepository.findAllByItemId(item.getId());

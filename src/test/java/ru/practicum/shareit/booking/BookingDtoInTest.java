@@ -19,10 +19,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BookingDtoInTest {
     @Autowired
     private JacksonTester<BookingDtoIn> json;
-    BookingDtoIn bookingDtoIn;
+    private BookingDtoIn bookingDtoIn;
 
     @BeforeEach
-    void initDto() {
+    public void initDto() {
         bookingDtoIn =
                 BookingDtoIn.builder().id(1L).start(LocalDateTime.of(2023, 1,
                         1, 0, 0, 0)).end(LocalDateTime.of(2023, 1, 2, 0, 0, 0)).itemId(1L).build();
@@ -30,7 +30,7 @@ public class BookingDtoInTest {
 
     @DisplayName(" сериализовать dto в json")
     @Test
-    void dtoTest() throws IOException {
+    public void dtoTest() throws IOException {
         JsonContent<BookingDtoIn> result = json.write(bookingDtoIn);
 
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(bookingDtoIn.getId().intValue());

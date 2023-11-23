@@ -64,21 +64,21 @@ public class ItemServiceImplTest {
     @InjectMocks
     private ItemServiceImpl itemServiceImpl;
 
-    User owner;
-    Item item;
-    int from = 0;
-    int size = 10;
-    PageRequest pageRequest = PageRequest.of(from, size);
+    private User owner;
+    private Item item;
+    private int from = 0;
+    private int size = 10;
+    private PageRequest pageRequest = PageRequest.of(from, size);
 
     @BeforeEach
-    void initEntities() {
+    public void initEntities() {
         owner = User.builder().id(1L).name("test_name_1").email("test_email_1").build();
         item = Item.builder().id(1L).name("test_name_1").description("test_description_1").available(true).owner(owner).build();
     }
 
     @DisplayName("сохранять предмет по id пользователя")
     @Test
-    void create_whenSuccessInvoked_thenCreatedItemIsReturned() {
+    public void create_whenSuccessInvoked_thenCreatedItemIsReturned() {
         when(userService.getById(anyLong())).thenReturn(UserMapper.toUserDto(owner));
         when(itemRepository.save(any())).thenReturn(item);
 
@@ -92,7 +92,7 @@ public class ItemServiceImplTest {
 
     @DisplayName("НЕ сохранять предмет по id пользователя, если этот id НЕ найден в бд")
     @Test
-    void create_whenUserIdNotFound_thenCreatedItemIsNotReturned() {
+    public void create_whenUserIdNotFound_thenCreatedItemIsNotReturned() {
         when(userService.getById(anyLong())).thenThrow(UserIdNotFound.class);
 
         ItemDtoIn itemDtoIn = ItemDtoIn.builder().name("test_name_1").description("test_description_1").available(true).build();
@@ -101,7 +101,7 @@ public class ItemServiceImplTest {
 
     @DisplayName("сохранять предмет по id пользователя в ответ на запрос (ItemRequest)")
     @Test
-    void create_whenSuccessInvoked_thenCreatedItemOnRequestIsReturned() {
+    public void create_whenSuccessInvoked_thenCreatedItemOnRequestIsReturned() {
         when(userService.getById(anyLong())).thenReturn(UserMapper.toUserDto(owner));
 
         item.setItemRequest(ItemRequest.builder().id(1L).build());
@@ -117,7 +117,7 @@ public class ItemServiceImplTest {
 
     @DisplayName("НЕ сохранять предмет по id пользователя в ответ на запрос (ItemRequest), если id_запроса НЕ найден в бд")
     @Test
-    void create_whenItemRequestIdNotFound_thenCreatedItemOnRequestIsNotReturned() {
+    public void create_whenItemRequestIdNotFound_thenCreatedItemOnRequestIsNotReturned() {
         when(userService.getById(anyLong())).thenReturn(UserMapper.toUserDto(owner));
         when(itemRequestRepository.findById(anyLong())).thenThrow(ItemRequestIdNotFound.class);
 
@@ -128,7 +128,7 @@ public class ItemServiceImplTest {
 
     @DisplayName("обновлять предмет по id пользователя и предмета")
     @Test
-    void updateById_whenSuccessInvoked_thenUpdatedItemIsReturned() {
+    public void updateById_whenSuccessInvoked_thenUpdatedItemIsReturned() {
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         item.setDescription("test_update-description_1");
         when(itemRepository.save(any())).thenReturn(item);
@@ -143,7 +143,7 @@ public class ItemServiceImplTest {
 
     @DisplayName("НЕ обновлять предмет по id пользователя и предмета, если id_предмета НЕ найден в бд")
     @Test
-    void updateById_whenItemIdNotFound_thenUpdatedItemIsNotReturned() {
+    public void updateById_whenItemIdNotFound_thenUpdatedItemIsNotReturned() {
         when(itemRepository.findById(anyLong())).thenThrow(ItemIdNotFound.class);
 
         ItemDtoIn updatedItemDtoIn = ItemDtoIn.builder().name("test_name_1").description("test_update-description_1").available(true).build();
@@ -152,7 +152,7 @@ public class ItemServiceImplTest {
 
     @DisplayName("удалять предмет по полю \"id\"")
     @Test
-    void deleteById_whenSuccessInvoked_thenStringResponseIsReturned() {
+    public void deleteById_whenSuccessInvoked_thenStringResponseIsReturned() {
         doNothing().when(itemRepository).deleteById(anyLong());
 
         String returnedResponse = itemServiceImpl.deleteById(anyLong());
@@ -162,7 +162,7 @@ public class ItemServiceImplTest {
 
     @DisplayName("выдавать предмет по полю \"id\" для владельца")
     @Test
-    void getById_whenSuccessInvoked_thenIssuedItemWithBookingsAndCommentsIsReturned() {
+    public void getById_whenSuccessInvoked_thenIssuedItemWithBookingsAndCommentsIsReturned() {
         when(userService.getById(owner.getId())).thenReturn(UserMapper.toUserDto(owner));
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
 
@@ -224,7 +224,7 @@ public class ItemServiceImplTest {
 
     @DisplayName("выдавать все предметы по полю \"id\" для владельца")
     @Test
-    void getAllByOwnerId_whenSuccessInvoked_thenIssuedItemsWithBookingsIsReturned() {
+    public void getAllByOwnerId_whenSuccessInvoked_thenIssuedItemsWithBookingsIsReturned() {
         Page<Item> items = new PageImpl<>(List.of(item));
         when(itemRepository.findAllByOwnerId(owner.getId(), pageRequest)).thenReturn(items);
 
@@ -260,7 +260,7 @@ public class ItemServiceImplTest {
 
     @DisplayName("проверять предмет на наличие в бд по полю \"id\" (результат: найден)")
     @Test
-    void idIsExists_whenSuccessInvoked_thenExceptionIsNotReturned() {
+    public void idIsExists_whenSuccessInvoked_thenExceptionIsNotReturned() {
         when(itemRepository.existsById(anyLong())).thenReturn(true);
 
         itemServiceImpl.idIsExists(anyLong());
@@ -268,7 +268,7 @@ public class ItemServiceImplTest {
 
     @DisplayName("проверять предмет на наличие в бд по полю \"id\" (результат: НЕ найден)")
     @Test
-    void idIsExists_whenIdNotFound_thenExceptionIsReturned() {
+    public void idIsExists_whenIdNotFound_thenExceptionIsReturned() {
         when(itemRepository.existsById(anyLong())).thenThrow(ItemIdNotFound.class);
 
         Assertions.assertThrows(ItemIdNotFound.class, () -> itemServiceImpl.idIsExists(anyLong()));
@@ -276,7 +276,7 @@ public class ItemServiceImplTest {
 
     @DisplayName("выдавать все предметы по поиску содеражщегося слова в полях \"name\" и \"description\"")
     @Test
-    void searchForUserByParameter_whenSuccessInvoked_thenIssuedItemsIsReturned() {
+    public void searchForUserByParameter_whenSuccessInvoked_thenIssuedItemsIsReturned() {
         String searchText = "teSt";
         Page<Item> issuedItems = new PageImpl<>(List.of(item));
         when(itemRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailableTrue(searchText,
@@ -289,7 +289,7 @@ public class ItemServiceImplTest {
 
     @DisplayName("сохранять комментарий по id пользователя и предмета")
     @Test
-    void createComment_whenSuccessInvoked_thenCreatedCommentIsReturned() {
+    public void createComment_whenSuccessInvoked_thenCreatedCommentIsReturned() {
         when(userService.getById(anyLong())).thenReturn(UserMapper.toUserDto(owner));
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
 

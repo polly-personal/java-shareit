@@ -33,13 +33,13 @@ public class ItemRequestRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    User user = User.builder().name("test_name_1").email("test_email_1").build();
-    User requester = User.builder().name("test_name_2").email("test_email_2").build();
+    private User user = User.builder().name("test_name_1").email("test_email_1").build();
+    private User requester = User.builder().name("test_name_2").email("test_email_2").build();
 
     ItemRequest itemRequest = ItemRequest.builder().description("test_description_1").created(LocalDateTime.now()).requester(requester).build();
-    int from = 0;
-    int size = 10;
-    PageRequest pageRequest = PageRequest.of(from, size);
+    private int from = 0;
+    private int size = 10;
+    private PageRequest pageRequest = PageRequest.of(from, size);
 
 
     @BeforeEach
@@ -50,7 +50,7 @@ public class ItemRequestRepositoryTest {
 
     @DisplayName("сохранять запрос на вещь")
     @Test
-    void save_whenSuccessInvoked_thenSavedItemRequestIsReturned() {
+    public void save_whenSuccessInvoked_thenSavedItemRequestIsReturned() {
         Assertions.assertNull(itemRequest.getId());
         ItemRequest returnedItemRequest = itemRequestRepository.save(itemRequest);
         Assertions.assertEquals(itemRequest, returnedItemRequest);
@@ -58,7 +58,7 @@ public class ItemRequestRepositoryTest {
 
     @DisplayName("НЕ сохранять запрос на вещь, если поле \"description\" == null")
     @Test
-    void save_whenDescriptionIsNull_thenSavedItemRequestIsNotReturned() {
+    public void save_whenDescriptionIsNull_thenSavedItemRequestIsNotReturned() {
         itemRequest.setDescription(null);
 
         Assertions.assertThrows(DataIntegrityViolationException.class, () -> itemRequestRepository.save(itemRequest));
@@ -66,7 +66,7 @@ public class ItemRequestRepositoryTest {
 
     @DisplayName("НЕ сохранять запрос на вещь, если длина поля \"description\" > 512")
     @Test
-    void save_whenDescriptionLengthIsMoreThen512_thenSavedItemRequestIsNotReturned() {
+    public void save_whenDescriptionLengthIsMoreThen512_thenSavedItemRequestIsNotReturned() {
         String description = "test_description_1";
         itemRequest.setDescription(description.repeat(50));
 
@@ -75,14 +75,14 @@ public class ItemRequestRepositoryTest {
 
     @DisplayName("НЕ сохранять запрос на вещь, если поле \"created\" == null")
     @Test
-    void save_whenCreatedIsNull_thenSavedItemRequestIsNotReturned() {
+    public void save_whenCreatedIsNull_thenSavedItemRequestIsNotReturned() {
         itemRequest.setCreated(null);
         Assertions.assertThrows(DataIntegrityViolationException.class, () -> itemRequestRepository.save(itemRequest));
     }
 
     @DisplayName("выдавать запрос на вещь по полю \"id\"")
     @Test
-    void findById_whenInvoked_thenFoundItemRequestIsReturned() {
+    public void findById_whenInvoked_thenFoundItemRequestIsReturned() {
         itemRequestRepository.save(itemRequest);
 
         Optional<ItemRequest> returnedItemRequest = itemRequestRepository.findById(itemRequest.getId());
@@ -92,7 +92,7 @@ public class ItemRequestRepositoryTest {
 
     @DisplayName("выдавать все запросы_вещей владельца_запросов_вещей по полю \"requester.id\"")
     @Test
-    void findAllByRequesterId_whenSuccessInvoked_thenFoundItemsIsReturned() {
+    public void findAllByRequesterId_whenSuccessInvoked_thenFoundItemsIsReturned() {
         itemRequestRepository.save(itemRequest);
 
         List<ItemRequest> returnedItemRequests = itemRequestRepository.findAllByRequesterId(requester.getId());
@@ -104,7 +104,7 @@ public class ItemRequestRepositoryTest {
 
     @DisplayName("выдавать для пользователя все запросы_вещей других_владельцов_запросов_вещей по полю \"requester.id\"")
     @Test
-    void findAllWithoutRequester_whenSuccessInvoked_thenFoundItemsIsReturned() {
+    public void findAllWithoutRequester_whenSuccessInvoked_thenFoundItemsIsReturned() {
         itemRequestRepository.save(itemRequest);
 
         List<ItemRequest> returnedItemRequests = itemRequestRepository.findAllWithoutRequester(user.getId(), pageRequest);
@@ -116,7 +116,7 @@ public class ItemRequestRepositoryTest {
 
     @DisplayName("сохранять запрос на вещь")
     @Test
-    void existsById_whenSuccessInvoked_thenSavedItemRequestIsReturned() {
+    public void existsById_whenSuccessInvoked_thenSavedItemRequestIsReturned() {
         itemRequestRepository.save(itemRequest);
         boolean result = itemRequestRepository.existsById(itemRequest.getId());
         Assertions.assertEquals(true, result);

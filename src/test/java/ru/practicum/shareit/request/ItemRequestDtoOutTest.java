@@ -19,10 +19,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ItemRequestDtoOutTest {
     @Autowired
     private JacksonTester<ItemRequestDtoOut> json;
-    ItemRequestDtoOut itemRequestDtoOut;
+    private ItemRequestDtoOut itemRequestDtoOut;
 
     @BeforeEach
-    void initDto() {
+    public void initDto() {
         itemRequestDtoOut =
                 ItemRequestDtoOut.builder().id(1L).description("test_description_1").created(LocalDateTime.of(2023, 1,
                         1, 0, 0, 0)).requesterId(1L).build();
@@ -30,7 +30,7 @@ public class ItemRequestDtoOutTest {
 
     @DisplayName(" сериализовать dto в json")
     @Test
-    void dtoTest() throws IOException {
+    public void dtoTest() throws IOException {
         JsonContent<ItemRequestDtoOut> result = json.write(itemRequestDtoOut);
 
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(itemRequestDtoOut.getId().intValue());

@@ -35,29 +35,29 @@ public class BookingRepositoryTest {
     @Autowired
     private ItemRepository itemRepository;
 
-    User itemOwner = User.builder().name("test_owner-name_1").email("test_owner-email_1").build();
-    User firstBooker = User.builder().name("test_booker-name_1").email("test_booker-email_1").build();
+    private User itemOwner = User.builder().name("test_owner-name_1").email("test_owner-email_1").build();
+    private User firstBooker = User.builder().name("test_booker-name_1").email("test_booker-email_1").build();
 
-    Item item = Item.builder().name("test_name_1").description("test_description_1").available(true).owner(itemOwner).build();
+    private Item item = Item.builder().name("test_name_1").description("test_description_1").available(true).owner(itemOwner).build();
 
     /*
     pastBooking: 1-9
     currentBooking: 10-19
     futureBooking: 20-29
     */
-    LocalDateTime past = LocalDateTime.of(2023, 11, 1, 01, 01, 01);
-    LocalDateTime current = LocalDateTime.of(2023, 11, 10, 01, 01, 01);
-    LocalDateTime future = LocalDateTime.of(2023, 11, 20, 01, 01, 01);
-    Booking pastBooking;
-    Booking currentBooking;
-    Booking futureBooking;
+    private LocalDateTime past = LocalDateTime.of(2023, 11, 1, 01, 01, 01);
+    private LocalDateTime current = LocalDateTime.of(2023, 11, 10, 01, 01, 01);
+    private LocalDateTime future = LocalDateTime.of(2023, 11, 20, 01, 01, 01);
+    private Booking pastBooking;
+    private Booking currentBooking;
+    private Booking futureBooking;
 
-    int from = 0;
-    int size = 10;
-    PageRequest pageRequest = PageRequest.of(from, size);
+    private int from = 0;
+    private int size = 10;
+    private PageRequest pageRequest = PageRequest.of(from, size);
 
     @BeforeEach
-    void saveUsersAndItemsAndInitBookings() {
+    public void saveUsersAndItemsAndInitBookings() {
         userRepository.save(itemOwner);
         userRepository.save(firstBooker);
         itemRepository.save(item);
@@ -69,7 +69,7 @@ public class BookingRepositoryTest {
 
     @DisplayName("сохранять бронь")
     @Test
-    void save_whenSuccessInvoked_thenSavedBookingIsReturned() {
+    public void save_whenSuccessInvoked_thenSavedBookingIsReturned() {
         Assertions.assertNull(currentBooking.getId());
         Booking returnedBooking = bookingRepository.save(currentBooking);
         Assertions.assertNotNull(currentBooking.getId());
@@ -78,28 +78,28 @@ public class BookingRepositoryTest {
 
     @DisplayName("НЕ сохранять бронь, если поле \"start\" == null")
     @Test
-    void save_whenStartIsNull_thenSavedBookingIsNotReturned() {
+    public void save_whenStartIsNull_thenSavedBookingIsNotReturned() {
         currentBooking.setStart(null);
         Assertions.assertThrows(DataIntegrityViolationException.class, () -> bookingRepository.save(currentBooking));
     }
 
     @DisplayName("НЕ сохранять бронь, если поле \"end\" == null")
     @Test
-    void save_whenEndIsNull_thenSavedBookingIsNotReturned() {
+    public void save_whenEndIsNull_thenSavedBookingIsNotReturned() {
         currentBooking.setStatus(null);
         Assertions.assertThrows(DataIntegrityViolationException.class, () -> bookingRepository.save(currentBooking));
     }
 
     @DisplayName("НЕ сохранять бронь, если поле \"status\" == null")
     @Test
-    void save_whenStatusIsNull_thenSavedBookingIsNotReturned() {
+    public void save_whenStatusIsNull_thenSavedBookingIsNotReturned() {
         currentBooking.setEnd(null);
         Assertions.assertThrows(DataIntegrityViolationException.class, () -> bookingRepository.save(currentBooking));
     }
 
     @DisplayName("выдавать все брони бронирующего по полю \"booker.id\"")
     @Test
-    void findAllByBookerId_whenSuccessInvoked_thenFoundBookingsIsReturned() {
+    public void findAllByBookerId_whenSuccessInvoked_thenFoundBookingsIsReturned() {
         User secondBooker = User.builder().name("test_booker-name_2").email("test_booker-email_2").build();
         userRepository.save(secondBooker);
         Booking firstBookingSecondBooker = Booking.builder().start(current).end(current.plusDays(9)).item(item).booker(secondBooker).status(Status.WAITING).build();
@@ -119,7 +119,7 @@ public class BookingRepositoryTest {
 
     @DisplayName("выдавать все CURRENT брони бронирующего по полю \"booker.id\"")
     @Test
-    void findAllByBookerIdAndStartBeforeAndEndAfter_whenSuccessInvoked_thenFoundBookingsIsReturned() {
+    public void findAllByBookerIdAndStartBeforeAndEndAfter_whenSuccessInvoked_thenFoundBookingsIsReturned() {
         bookingRepository.save(pastBooking);
         bookingRepository.save(currentBooking);
         bookingRepository.save(futureBooking);
@@ -134,7 +134,7 @@ public class BookingRepositoryTest {
 
     @DisplayName("выдавать все PAST брони бронирующего по полю \"booker.id\"")
     @Test
-    void findAllByBookerIdAndEndBefore_whenSuccessInvoked_thenFoundBookingsIsReturned() {
+    public void findAllByBookerIdAndEndBefore_whenSuccessInvoked_thenFoundBookingsIsReturned() {
         bookingRepository.save(pastBooking);
         bookingRepository.save(currentBooking);
         bookingRepository.save(futureBooking);
@@ -149,7 +149,7 @@ public class BookingRepositoryTest {
 
     @DisplayName("выдавать все FUTURE брони бронирующего по полю \"booker.id\"")
     @Test
-    void findAllByBookerIdAndStartAfter_whenSuccessInvoked_thenFoundBookingsIsReturned() {
+    public void findAllByBookerIdAndStartAfter_whenSuccessInvoked_thenFoundBookingsIsReturned() {
         bookingRepository.save(pastBooking);
         bookingRepository.save(currentBooking);
         bookingRepository.save(futureBooking);
@@ -164,7 +164,7 @@ public class BookingRepositoryTest {
 
     @DisplayName("выдавать все WAITING брони бронирующего по полю \"booker.id\"")
     @Test
-    void findAllByBookerIdAndStatusEqualsWaiting_whenSuccessInvoked_thenFoundBookingsIsReturned() {
+    public void findAllByBookerIdAndStatusEqualsWaiting_whenSuccessInvoked_thenFoundBookingsIsReturned() {
         currentBooking.setStatus(Status.APPROVED);
         futureBooking.setStatus(Status.REJECTED);
 
@@ -182,7 +182,7 @@ public class BookingRepositoryTest {
 
     @DisplayName("выдавать все REJECTED брони бронирующего по полю \"booker.id\"")
     @Test
-    void findAllByBookerIdAndStatusEqualsRejected_whenSuccessInvoked_thenFoundBookingsIsReturned() {
+    public void findAllByBookerIdAndStatusEqualsRejected_whenSuccessInvoked_thenFoundBookingsIsReturned() {
         currentBooking.setStatus(Status.APPROVED);
         futureBooking.setStatus(Status.REJECTED);
 

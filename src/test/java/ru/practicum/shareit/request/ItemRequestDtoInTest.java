@@ -18,17 +18,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ItemRequestDtoInTest {
     @Autowired
     private JacksonTester<ItemRequestDtoIn> json;
-    ItemRequestDtoIn itemRequestDtoIn;
+    private ItemRequestDtoIn itemRequestDtoIn;
 
     @BeforeEach
-    void initDto() {
+    public void initDto() {
         itemRequestDtoIn =
                 ItemRequestDtoIn.builder().description("test_description_1").build();
     }
 
     @DisplayName(" сериализовать dto в json")
     @Test
-    void dtoTest() throws IOException {
+    public void dtoTest() throws IOException {
         JsonContent<ItemRequestDtoIn> result = json.write(itemRequestDtoIn);
         assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo(itemRequestDtoIn.getDescription());
     }

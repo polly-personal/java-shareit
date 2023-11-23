@@ -18,16 +18,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UserDtoTest {
     @Autowired
     private JacksonTester<UserDto> json;
-    UserDto userDto;
+    private UserDto userDto;
 
     @BeforeEach
-    void initDto() {
+    public void initDto() {
         userDto = UserDto.builder().id(1L).name("test_name_1").email("test_email_1").build();
     }
 
     @DisplayName(" сериализовать dto в json")
     @Test
-    void dtoTest() throws IOException {
+    public void dtoTest() throws IOException {
         JsonContent<UserDto> result = json.write(userDto);
 
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(userDto.getId().intValue());

@@ -45,16 +45,16 @@ public class ItemRequestServiceImplTest {
     @InjectMocks
     private ItemRequestServiceImpl itemRequestServiceImpl;
 
-    User owner;
-    User requester;
-    Item item;
-    ItemRequest itemRequest;
-    int from = 0;
-    int size = 10;
-    PageRequest pageRequest = PageRequest.of(from, size, Sort.by("created").descending());
+    private User owner;
+    private User requester;
+    private Item item;
+    private ItemRequest itemRequest;
+    private int from = 0;
+    private int size = 10;
+    private PageRequest pageRequest = PageRequest.of(from, size, Sort.by("created").descending());
 
     @BeforeEach
-    void initEntities() {
+    public void initEntities() {
         owner = User.builder().id(1L).name("test_name_1").email("test_email_1").build();
         requester = User.builder().id(2L).name("test_name_2").email("test_email_2").build();
         item = Item.builder().id(1L).name("test_name_1").description("test_description_1").available(true).owner(owner).build();
@@ -63,7 +63,7 @@ public class ItemRequestServiceImplTest {
 
     @DisplayName("сохранять запрос_на_вещь по id пользователя")
     @Test
-    void create_whenSuccessInvoked_thenCreatedItemRequestIsReturned() {
+    public void create_whenSuccessInvoked_thenCreatedItemRequestIsReturned() {
         when(userService.getById(anyLong())).thenReturn(UserMapper.toUserDto(requester));
         when(itemRequestRepository.save(any())).thenReturn(itemRequest);
 
@@ -76,7 +76,7 @@ public class ItemRequestServiceImplTest {
 
     @DisplayName("НЕ сохранять запрос_на_вещь по id пользователя, если этот id НЕ найден в бд")
     @Test
-    void create_whenIdNotFound_thenCreatedItemRequestIsNotReturned() {
+    public void create_whenIdNotFound_thenCreatedItemRequestIsNotReturned() {
         when(userService.getById(anyLong())).thenThrow(UserIdNotFound.class);
 
         ItemRequestDtoIn itemRequestDtoIn = ItemRequestMapper.toRequestDtoIn(itemRequest);
@@ -85,7 +85,7 @@ public class ItemRequestServiceImplTest {
 
     @DisplayName("выдавать запрос_на_вещь по полю \"id\" (выдача для владельца_запроса_вещи)")
     @Test
-    void getById_whenSuccessInvoked_thenIssuedItemRequestIsReturned() {
+    public void getById_whenSuccessInvoked_thenIssuedItemRequestIsReturned() {
         when(itemRequestRepository.findById(anyLong())).thenReturn(Optional.of(itemRequest));
 
         ItemRequestDtoOut returnedItemRequestDtoOut = itemRequestServiceImpl.getById(anyLong());
@@ -96,7 +96,7 @@ public class ItemRequestServiceImplTest {
 
     @DisplayName("НЕ выдавать запрос_на_вещь по полю \"id\", если этот id НЕ найден в бд (выдача для владельца_запроса_вещи)")
     @Test
-    void getById_whenIdNotFound_thenIssuedItemRequestIsNotReturned() {
+    public void getById_whenIdNotFound_thenIssuedItemRequestIsNotReturned() {
         when(itemRequestRepository.findById(anyLong())).thenThrow(ItemRequestIdNotFound.class);
 
         Assertions.assertThrows(ItemRequestIdNotFound.class, () -> itemRequestServiceImpl.getById(anyLong()));
@@ -105,7 +105,7 @@ public class ItemRequestServiceImplTest {
     @DisplayName("выдавать все запросы_на_вещи по id владельца_запроса_вещи (requester.id) (выдача для " +
             "владельца_запроса_вещи)")
     @Test
-    void getAllForRequester_whenSuccessInvoked_thenIssuedItemRequestIsReturned() {
+    public void getAllForRequester_whenSuccessInvoked_thenIssuedItemRequestIsReturned() {
         doNothing().when(userService).idIsExists(anyLong());
         when(itemRequestRepository.findAllByRequesterId(anyLong())).thenReturn(List.of(itemRequest));
 
@@ -118,7 +118,7 @@ public class ItemRequestServiceImplTest {
     @DisplayName("НЕ выдавать все запросы_на_вещи по id владельца_запроса_вещи (requester.id), если этот id НЕ найден" +
             " в бд (выдача для владельца_запроса_вещи)")
     @Test
-    void getAllForRequester_whenIdNotFound_thenIssuedItemRequestIsNotReturned() {
+    public void getAllForRequester_whenIdNotFound_thenIssuedItemRequestIsNotReturned() {
         doThrow(ItemRequestIdNotFound.class).when(userService).idIsExists(anyLong());
 
         Assertions.assertThrows(ItemRequestIdNotFound.class, () -> itemRequestServiceImpl.getAllForRequester(anyLong()));
@@ -126,7 +126,7 @@ public class ItemRequestServiceImplTest {
 
     @DisplayName("выдавать все запросы_на_вещи по id пользователя (выдача для обычного пользователя)")
     @Test
-    void getAllOtherUsersRequests_whenSuccessInvoked_thenIssuedItemRequestIsReturned() {
+    public void getAllOtherUsersRequests_whenSuccessInvoked_thenIssuedItemRequestIsReturned() {
         doNothing().when(userService).idIsExists(owner.getId());
         when(itemRequestRepository.findAllWithoutRequester(owner.getId(), pageRequest)).thenReturn(List.of(itemRequest));
 
@@ -139,7 +139,7 @@ public class ItemRequestServiceImplTest {
 
     @DisplayName("НЕ выдавать все запросы_на_вещи по id пользователя (выдача для обычного пользователя), если этот id НЕ найден в бд")
     @Test
-    void getAllOtherUsersRequests_whenIdNotFound_thenIssuedItemRequestNotIsReturned() {
+    public void getAllOtherUsersRequests_whenIdNotFound_thenIssuedItemRequestNotIsReturned() {
         doThrow(ItemRequestIdNotFound.class).when(userService).idIsExists(anyLong());
 
         Assertions.assertThrows(ItemRequestIdNotFound.class, () -> itemRequestServiceImpl.getAllOtherUsersRequests(owner.getId(), from, size));
@@ -147,7 +147,7 @@ public class ItemRequestServiceImplTest {
 
     @DisplayName("проверять запрос_на_вещь на наличие в бд по полю \"id\" (результат: найден)")
     @Test
-    void idIsExists_whenSuccessInvoked_thenExceptionIsNotReturned() {
+    public void idIsExists_whenSuccessInvoked_thenExceptionIsNotReturned() {
         when(itemRequestRepository.existsById(anyLong())).thenReturn(true);
 
         itemRequestServiceImpl.idIsExists(anyLong());
@@ -155,7 +155,7 @@ public class ItemRequestServiceImplTest {
 
     @DisplayName("проверять запрос_на_вещь на наличие в бд по полю \"id\" (результат: НЕ найден)")
     @Test
-    void idIsExists_whenIdNotFound_thenExceptionIsReturned() {
+    public void idIsExists_whenIdNotFound_thenExceptionIsReturned() {
         when(itemRequestRepository.existsById(anyLong())).thenThrow(ItemRequestIdNotFound.class);
 
         Assertions.assertThrows(ItemRequestIdNotFound.class, () -> itemRequestServiceImpl.idIsExists(anyLong()));

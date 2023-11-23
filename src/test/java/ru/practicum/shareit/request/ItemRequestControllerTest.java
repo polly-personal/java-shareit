@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import ru.practicum.shareit.item.dto.ItemDtoIn;
 import ru.practicum.shareit.item.dto.ItemDtoOut;
 import ru.practicum.shareit.request.controller.ItemRequestController;
@@ -18,12 +19,15 @@ import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
+import javax.validation.ConstraintViolationException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -39,7 +43,7 @@ public class ItemRequestControllerTest {
     private MockMvc mvc;
 
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
 
     @MockBean
     private ItemRequestService itemRequestService;
@@ -47,15 +51,15 @@ public class ItemRequestControllerTest {
     @MockBean
     private UserService userService;
 
-    UserDto ownerDto;
-    UserDto requesterDto;
-    ItemDtoIn itemDtoIn;
-    ItemDtoOut itemDtoOut;
-    ItemRequestDtoIn itemRequestDtoIn;
-    ItemRequestDtoOut itemRequestDtoOut;
+    private UserDto ownerDto;
+    private UserDto requesterDto;
+    private ItemDtoIn itemDtoIn;
+    private ItemDtoOut itemDtoOut;
+    private ItemRequestDtoIn itemRequestDtoIn;
+    private ItemRequestDtoOut itemRequestDtoOut;
 
     @BeforeEach
-    void initEntities() {
+    public void initEntities() {
         ownerDto = UserDto.builder().id(1L).name("test_name_1").email("test_email_1@gmail.com").build();
         requesterDto = UserDto.builder().id(2L).name("test_name_2").email("test_email_2@gmail.com").build();
 
@@ -70,7 +74,7 @@ public class ItemRequestControllerTest {
 
     @DisplayName("сохранять запрос_на_вещь")
     @Test
-    void create_whenSuccessInvoked_thenCreatedItemRequestIsReturned() throws Exception {
+    public void create_whenSuccessInvoked_thenCreatedItemRequestIsReturned() throws Exception {
         when(itemRequestService.create(anyLong(), any())).thenReturn(itemRequestDtoOut);
 
         mvc.perform(post("/requests")
@@ -86,9 +90,36 @@ public class ItemRequestControllerTest {
                 .andExpect(jsonPath("$.requesterId").value("2"));
     }
 
+    @DisplayName("НЕ сохранять запрос_на_вещь, если этот id меньше или равен нулю")
+    @Test
+    public void create_whenConstraintViolationException_thenCreatedItemRequestIsNotReturned() throws Exception {
+        mvc.perform(post("/requests")
+                        .header("X-Sharer-User-Id", -1L)
+                        .content(mapper.writeValueAsString(itemRequestDtoIn))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ConstraintViolationException));
+    }
+
+    @DisplayName("НЕ сохранять запрос_на_вещь, если в пришедшем json'e поле \"description\" == null")
+    @Test
+    public void create_whenMethodArgumentNotValidException_thenCreatedItemRequestIsNotReturned() throws Exception {
+        itemRequestDtoIn.setDescription(null);
+        mvc.perform(post("/requests")
+                        .header("X-Sharer-User-Id", -1L)
+                        .content(mapper.writeValueAsString(itemRequestDtoIn))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException));
+    }
+
     @DisplayName("выдавать запрос_на_вещь по полю \"id\"")
     @Test
-    void getById_whenSuccessInvoked_thenIssuedItemRequestIsReturned() throws Exception {
+    public void getById_whenSuccessInvoked_thenIssuedItemRequestIsReturned() throws Exception {
         doNothing().when(userService).idIsExists(anyLong());
         when(itemRequestService.getById(anyLong())).thenReturn(itemRequestDtoOut);
 
@@ -105,7 +136,7 @@ public class ItemRequestControllerTest {
 
     @DisplayName("выдавать все запросы_на_вещи по id владельца_запроса_вещи (requester.id) (выдача для владельца_запроса_вещи)")
     @Test
-    void getAllForRequester_whenSuccessInvoked_thenIssuedItemRequestsIsReturned() throws Exception {
+    public void getAllForRequester_whenSuccessInvoked_thenIssuedItemRequestsIsReturned() throws Exception {
         when(itemRequestService.getAllForRequester(anyLong())).thenReturn(List.of(itemRequestDtoOut));
 
         mvc.perform(get("/requests")
@@ -121,9 +152,9 @@ public class ItemRequestControllerTest {
                 .andExpect(jsonPath("$[0].requesterId").value("2"));
     }
 
-    @DisplayName("НЕ выдавать все запросы_на_вещи по id владельца_запроса_вещи (requester.id), если этот id НЕ найден в бд (выдача для владельца_запроса_вещи)")
+    @DisplayName("выдавать все запросы_на_вещи по id пользователя (выдача для любого пользователя)")
     @Test
-    void getAllOtherUsersRequests_whenSuccessInvoked_thenIssuedItemRequestsIsReturned() throws Exception {
+    public void getAllOtherUsersRequests_whenSuccessInvoked_thenIssuedItemRequestsIsReturned() throws Exception {
         when(itemRequestService.getAllOtherUsersRequests(anyLong(), anyInt(), anyInt())).thenReturn(List.of(itemRequestDtoOut));
 
         mvc.perform(get("/requests/all")
@@ -137,5 +168,20 @@ public class ItemRequestControllerTest {
                 .andExpect(jsonPath("$[0].description", is(itemRequestDtoOut.getDescription())))
                 .andExpect(jsonPath("$[0].created").value("2023-01-01T00:00:00"))
                 .andExpect(jsonPath("$[0].requesterId").value("2"));
+    }
+
+    @DisplayName("НЕ выдавать все запросы_на_вещи по id пользователя (выдача для любого пользователя), если параметр запроса \"from\" меньше 0")
+    @Test
+    public void getAllOtherUsersRequests_whenConstraintViolationException_thenIssuedItemRequestsIsNotReturned() throws Exception {
+        mvc.perform(get("/requests/all")
+                        .header("X-Sharer-User-Id", ownerDto.getId())
+                        .param("from", "-1")
+                        .param("size", "10")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ConstraintViolationException))
+                .andExpect(result -> assertEquals("getAllOtherUsersRequests.from: must be greater than or equal to 0", result.getResolvedException().getMessage()));
     }
 }
