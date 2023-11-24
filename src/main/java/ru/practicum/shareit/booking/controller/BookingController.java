@@ -12,6 +12,7 @@ import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -25,44 +26,48 @@ import java.util.List;
 public class BookingController {
     private final BookingService bookingService;
     private final UserService userService;
+    private static final String requestHeaderUserId = "X-Sharer-User-Id";
 
-
-    @GetMapping("/{bookingId}")
-    public BookingDtoOut getByIdAndRequestorId(@RequestHeader("X-Sharer-User-Id") @Positive @Min(1) long requestorId,
-                                               @PathVariable long bookingId) {
-        log.info("🟫 GET /bookings/{}", bookingId);
-
-        return bookingService.getByIdAndRequestorId(requestorId, bookingId);
-    }
-
-    @GetMapping
-    public List<BookingDtoOut> getAllByBookerId(@RequestHeader("X-Sharer-User-Id") @Positive @Min(1) long bookerId,
-                                                @RequestParam(defaultValue = "ALL") String state) {
-        log.info("🟫 запрос от бронирующего: GET /bookings?state={}", state);
-        userService.idIsExists(bookerId);
-        return bookingService.getAllByBookerId(bookerId, state);
-    }
-
-    @GetMapping("/owner")
-    public List<BookingDtoOut> getAllByOwnerId(@RequestHeader("X-Sharer-User-Id") @Positive @Min(1) long ownerId,
-                                               @RequestParam(defaultValue = "ALL") String state) {
-        log.info("🟫 запрос от владельца: GET /bookings?state={}", state);
-        userService.idIsExists(ownerId);
-        return bookingService.getAllByOwnerId(ownerId, state);
-    }
 
     @PostMapping
-    public BookingDtoOut create(@RequestHeader("X-Sharer-User-Id") @Positive @Min(1) long userId,
+    public BookingDtoOut create(@RequestHeader(requestHeaderUserId) @Positive @Min(1) long userId,
                                 @Validated(CreateValidation.class) @RequestBody BookingDtoIn bookingDtoIn) {
         log.info("🟫 POST /bookings");
         return bookingService.create(userId, bookingDtoIn);
     }
 
     @PatchMapping("/{bookingId}")
-    public BookingDtoOut update(@RequestHeader("X-Sharer-User-Id") @Positive @Min(1) long ownerId,
-                                @PathVariable(name = "bookingId") @Positive @Min(1) long bookingId,
-                                @RequestParam(name = "approved") boolean isApproval) {
+    public BookingDtoOut updateStatus(@RequestHeader(requestHeaderUserId) @Positive @Min(1) long ownerId,
+                                      @PathVariable(name = "bookingId") @Positive @Min(1) long bookingId,
+                                      @RequestParam(name = "approved") boolean isApproval) {
         log.info("🟫 PATCH /bookings/{}?approved={}", bookingId, isApproval);
         return bookingService.updateStatus(ownerId, bookingId, isApproval);
+    }
+
+    @GetMapping("/{bookingId}")
+    public BookingDtoOut getByIdAndOwnerOrBookerId(@RequestHeader(requestHeaderUserId) @Positive @Min(1) long ownerOrBookerId,
+                                                   @PathVariable long bookingId) {
+        log.info("🟫 GET /bookings/{}", bookingId);
+
+        return bookingService.getByIdAndOwnerOrBookerId(ownerOrBookerId, bookingId);
+    }
+
+    @GetMapping
+    public List<BookingDtoOut> getAllByBookerId(@RequestHeader(requestHeaderUserId) @Positive @Min(1) long bookerId,
+                                                @RequestParam(defaultValue = "ALL") String state,
+                                                @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                                @RequestParam(defaultValue = "10") @Positive @Min(1) int size) {
+        log.info("🟫 запрос от бронирующего: GET /bookings?state={}&from={}&size={}", state, from, size);
+        return bookingService.getAllByBookerId(bookerId, state, from, size);
+    }
+
+    @GetMapping("/owner")
+    public List<BookingDtoOut> getAllByOwnerId(@RequestHeader(requestHeaderUserId) @Positive @Min(1) long ownerId,
+                                               @RequestParam(defaultValue = "ALL") String state,
+                                               @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                               @RequestParam(defaultValue = "10") @Positive @Min(1) int size) {
+        log.info("🟫 запрос от владельца: GET /bookings?state={}&from={}&size={}", state, from, size);
+        userService.idIsExists(ownerId);
+        return bookingService.getAllByOwnerId(ownerId, state, from, size);
     }
 }

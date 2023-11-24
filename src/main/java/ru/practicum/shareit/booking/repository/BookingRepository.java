@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.repository;
 
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.practicum.shareit.booking.constant.Status;
 import ru.practicum.shareit.booking.model.Booking;
@@ -11,25 +12,35 @@ import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    List<Booking> findAllByBookerId(long bookerId, Sort sort);
+    // ALL
+    Page<Booking> findAllByBookerId(long bookerId, Pageable pageRequest);
 
-    List<Booking> findAllByBookerIdAndStartBeforeAndEndAfter(long bookerId, LocalDateTime start, LocalDateTime end, Sort sort);
+    // CURRENT
+    Page<Booking> findAllByBookerIdAndStartBeforeAndEndAfter(long bookerId, LocalDateTime start, LocalDateTime end, Pageable pageRequest);
 
-    List<Booking> findAllByBookerIdAndStartAfter(long bookerId, LocalDateTime dateTime, Sort sort);
+    // PAST
+    Page<Booking> findAllByBookerIdAndEndBefore(long bookerId, LocalDateTime dateTime, Pageable pageRequest);
 
-    List<Booking> findAllByBookerIdAndEndBefore(long bookerId, LocalDateTime dateTime, Sort sort);
+    // FUTURE
+    Page<Booking> findAllByBookerIdAndStartAfter(long bookerId, LocalDateTime dateTime, Pageable pageRequest);
 
-    List<Booking> findAllByBookerIdAndStatusEquals(long bookerId, Status status, Sort sort);
+    // WAITING / REJECTED
+    Page<Booking> findAllByBookerIdAndStatusEquals(long bookerId, Status status, Pageable pageRequest);
 
-    List<Booking> findAllByItemOwnerId(long bookerId, Sort sort);
+    // ALL
+    Page<Booking> findAllByItemOwnerId(long bookerId, Pageable pageRequest);
 
-    List<Booking> findAllByItemOwnerIdAndStartBeforeAndEndAfter(long bookerId, LocalDateTime start, LocalDateTime end, Sort sort);
+    // CURRENT
+    Page<Booking> findAllByItemOwnerIdAndStartBeforeAndEndAfter(long bookerId, LocalDateTime start, LocalDateTime end, Pageable pageRequest);
 
-    List<Booking> findAllByItemOwnerIdAndStartAfter(long bookerId, LocalDateTime dateTime, Sort sort);
+    // PAST
+    Page<Booking> findAllByItemOwnerIdAndStartAfter(long bookerId, LocalDateTime dateTime, Pageable pageRequest);
 
-    List<Booking> findAllByItemOwnerIdAndEndBefore(long bookerId, LocalDateTime dateTime, Sort sort);
+    // FUTURE
+    Page<Booking> findAllByItemOwnerIdAndEndBefore(long bookerId, LocalDateTime dateTime, Pageable pageRequest);
 
-    List<Booking> findAllByItemOwnerIdAndStatusEquals(long bookerId, Status status, Sort sort);
+    // WAITING / REJECTED
+    Page<Booking> findAllByItemOwnerIdAndStatusEquals(long bookerId, Status status, Pageable pageRequest);
 
     Optional<Booking> findFirstByItemIdInAndStartBeforeOrderByEndDesc(List<Long> idItems, LocalDateTime dateTime);
 

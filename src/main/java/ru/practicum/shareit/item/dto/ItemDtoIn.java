@@ -26,5 +26,5 @@ public class ItemDtoIn {
     @NotNull(message = "поле \"available\" должно быть заполнено", groups = CreateValidation.class)
     private Boolean available;
 
-    private Long itemRequestId;
+    private Long requestId;
 }

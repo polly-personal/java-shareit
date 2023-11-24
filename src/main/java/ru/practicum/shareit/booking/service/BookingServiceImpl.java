@@ -2,6 +2,8 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +24,8 @@ import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -33,7 +35,6 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final UserService userService;
     private final ItemService itemService;
-    private static final Sort sort = Sort.by(Sort.Direction.DESC, "start");
 
     @Transactional
     @Override
@@ -94,77 +95,103 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingDtoOut getByIdAndRequestorId(long requestorId, long bookingId) {
-        Booking issuedBooking = requestorIdIsLinkedBookingId(requestorId, bookingId);
+    public BookingDtoOut getByIdAndOwnerOrBookerId(long ownerOrBookerIdId, long bookingId) {
+        Booking issuedBooking = requesterIdIsLinkedBookingId(ownerOrBookerIdId, bookingId);
 
-        log.info("🟦 выдана бронь по id и RequestorId: " + issuedBooking);
+        log.info("🟦 выдана бронь по id и OwnerOrBookerId: " + issuedBooking);
         return BookingMapper.toBookingDto(issuedBooking);
     }
 
     @Override
-    public List<BookingDtoOut> getAllByBookerId(long bookerId, String state) {
-        List<Booking> bookings = new ArrayList<>();
+    public List<BookingDtoOut> getAllByBookerId(long bookerId, String state, int from, int size) {
+        userService.idIsExists(bookerId);
+
+        /*
+        from -- индекс объекта в возвращаемом списке, с кого надо начать отображать список (индексция начинается с 0)
+        size -- колво объектов для отбражения на 1ой странице
+        ---------
+        from / size = номер страницы (Page<Booking> bookings), на которой будут отображены объекты в колве size (индексция начинается с 0)
+        например,
+            from -- 4
+            size -- 2
+            №page -- 4/2 = 2
+            отображаемые объекты: (№4)Item с id=1
+        */
+        Page<Booking> bookings;
+        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by("start").descending());
 
         switch (state) {
             case "ALL":
-                bookings = bookingRepository.findAllByBookerId(bookerId, sort);
+                bookings = bookingRepository.findAllByBookerId(bookerId, pageRequest);
                 break;
             case "CURRENT":
-                bookings = bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfter(bookerId, LocalDateTime.now(), LocalDateTime.now(), sort);
+                bookings = bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfter(bookerId, LocalDateTime.now(), LocalDateTime.now(), pageRequest);
                 break;
             case "PAST":
-                bookings = bookingRepository.findAllByBookerIdAndEndBefore(bookerId, LocalDateTime.now(), sort);
+                bookings = bookingRepository.findAllByBookerIdAndEndBefore(bookerId, LocalDateTime.now(), pageRequest);
                 break;
             case "FUTURE":
-                bookings = bookingRepository.findAllByBookerIdAndStartAfter(bookerId, LocalDateTime.now(), sort);
+                bookings = bookingRepository.findAllByBookerIdAndStartAfter(bookerId, LocalDateTime.now(), pageRequest);
                 break;
             case "WAITING":
-                bookings = bookingRepository.findAllByBookerIdAndStatusEquals(bookerId, Status.WAITING,
-                        sort);
+                bookings = bookingRepository.findAllByBookerIdAndStatusEquals(bookerId, Status.WAITING, pageRequest);
                 break;
             case "REJECTED":
-                bookings = bookingRepository.findAllByBookerIdAndStatusEquals(bookerId, Status.REJECTED,
-                        sort);
+                bookings = bookingRepository.findAllByBookerIdAndStatusEquals(bookerId, Status.REJECTED, pageRequest);
                 break;
             default:
                 throw new BookingUnsupportedState("Unknown state: UNSUPPORTED_STATUS");
         }
 
+
         log.info("🟦 выдан список бронирований: " + bookings);
-        return BookingMapper.toBookingsDto(bookings);
+        return BookingMapper.toBookingsDto(bookings.stream().collect(Collectors.toList()));
     }
 
     @Override
-    public List<BookingDtoOut> getAllByOwnerId(long ownerId, String state) {
-        List<Booking> bookings = new ArrayList<>();
+    public List<BookingDtoOut> getAllByOwnerId(long ownerId, String state, int from, int size) {
+        userService.idIsExists(ownerId);
+
+        /*
+        from -- индекс объекта в возвращаемом списке, с кого надо начать отображать список (индексция начинается с 0)
+        size -- колво объектов для отбражения на 1ой странице
+        ---------
+        from / size = номер страницы (Page<Booking> bookings), на которой будут отображены объекты в колве size (индексция начинается с 0)
+        например,
+            from -- 4
+            size -- 2
+            №page -- 4/2 = 2
+            отображаемые объекты: (№4)Item с id=1
+        */
+        Page<Booking> bookings;
+        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by("start").descending());
+
 
         switch (state) {
             case "ALL":
-                bookings = bookingRepository.findAllByItemOwnerId(ownerId, sort);
+                bookings = bookingRepository.findAllByItemOwnerId(ownerId, pageRequest);
                 break;
             case "CURRENT":
-                bookings = bookingRepository.findAllByItemOwnerIdAndStartBeforeAndEndAfter(ownerId, LocalDateTime.now(), LocalDateTime.now(), sort);
+                bookings = bookingRepository.findAllByItemOwnerIdAndStartBeforeAndEndAfter(ownerId, LocalDateTime.now(), LocalDateTime.now(), pageRequest);
                 break;
             case "PAST":
-                bookings = bookingRepository.findAllByItemOwnerIdAndEndBefore(ownerId, LocalDateTime.now(), sort);
+                bookings = bookingRepository.findAllByItemOwnerIdAndEndBefore(ownerId, LocalDateTime.now(), pageRequest);
                 break;
             case "FUTURE":
-                bookings = bookingRepository.findAllByItemOwnerIdAndStartAfter(ownerId, LocalDateTime.now(), sort);
+                bookings = bookingRepository.findAllByItemOwnerIdAndStartAfter(ownerId, LocalDateTime.now(), pageRequest);
                 break;
             case "WAITING":
-                bookings = bookingRepository.findAllByItemOwnerIdAndStatusEquals(ownerId, Status.WAITING,
-                        sort);
+                bookings = bookingRepository.findAllByItemOwnerIdAndStatusEquals(ownerId, Status.WAITING, pageRequest);
                 break;
             case "REJECTED":
-                bookings = bookingRepository.findAllByItemOwnerIdAndStatusEquals(ownerId, Status.REJECTED,
-                        sort);
+                bookings = bookingRepository.findAllByItemOwnerIdAndStatusEquals(ownerId, Status.REJECTED, pageRequest);
                 break;
             default:
                 throw new BookingUnsupportedState("Unknown state: UNSUPPORTED_STATUS");
         }
 
         log.info("🟦 выдан список бронирований: " + bookings);
-        return BookingMapper.toBookingsDto(bookings);
+        return BookingMapper.toBookingsDto(bookings.stream().collect(Collectors.toList()));
     }
 
     private Booking ownerIdIsLinkedBookingId(long ownerId, long bookingId) {
@@ -184,8 +211,8 @@ public class BookingServiceImpl implements BookingService {
         return issuedBooking;
     }
 
-    private Booking requestorIdIsLinkedBookingId(long requestorId, long bookingId) {
-        userService.idIsExists(requestorId);
+    private Booking requesterIdIsLinkedBookingId(long ownerOrBookerIdId, long bookingId) {
+        userService.idIsExists(ownerOrBookerIdId);
 
         Booking issuedBooking = bookingRepository.findById(bookingId).orElseThrow(() -> new BookingIdNotFound("введен " +
                 "несуществующий id " +
@@ -194,8 +221,8 @@ public class BookingServiceImpl implements BookingService {
         long bookerId = issuedBooking.getBooker().getId();
         long ownerId = issuedBooking.getItem().getOwner().getId();
 
-        if (requestorId != bookerId && requestorId != ownerId) {
-            throw new BookingRequestorIdNotLinkedToBookerIdOrOwnerId("id запрашивающего: " + requestorId + " не связан с id арендующего или id владельца: " + bookerId);
+        if (ownerOrBookerIdId != bookerId && ownerOrBookerIdId != ownerId) {
+            throw new BookingRequesterIdNotLinkedToBookerIdOrOwnerId("id запрашивающего: " + ownerOrBookerIdId + " не связан с id арендующего или id владельца: " + bookerId);
         }
 
         return issuedBooking;

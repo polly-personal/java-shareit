@@ -30,6 +30,6 @@ public class Comment {
     @ManyToOne
     private User author;
 
-    @Column
+    @Column(nullable = false)
     private LocalDateTime created;
 }

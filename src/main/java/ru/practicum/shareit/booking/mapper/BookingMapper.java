@@ -25,9 +25,33 @@ public class BookingMapper {
                 .item(new BookingDtoOut.Item(item.getId(), item.getName()))
                 .build();
 
-        log.info("🔀 booking: " + booking + " сконвертирован в getBookingDto: " + bookingDtoOut);
+        log.info("🔀 booking: " + booking + " сконвертирован в bookingDtoOut: " + bookingDtoOut);
         return bookingDtoOut;
     }
+
+    public List<BookingDtoOut> toBookingsDto(List<Booking> bookings) {
+        List<BookingDtoOut> bookingDtoOuts = bookings
+                .stream()
+                .map(BookingMapper::toBookingDto)
+                .collect(Collectors.toList());
+
+        log.info("🔀 список bookings: " + bookings + " сконвертирован в bookingDtoOuts: " + bookingDtoOuts);
+        return bookingDtoOuts;
+    }
+
+    public BookingDtoIn toBookingDtoIn(Booking booking) {
+        Item item = booking.getItem();
+        BookingDtoIn bookingDtoIn = BookingDtoIn.builder()
+                .id(booking.getId())
+                .start(booking.getStart())
+                .end(booking.getEnd())
+                .itemId(item.getId())
+                .build();
+
+        log.info("🔀 booking: " + booking + " сконвертирован в bookingDtoIn: " + bookingDtoIn);
+        return bookingDtoIn;
+    }
+
 
     public BookingDtoOutForItem toBookingDtoForItem(Booking booking) {
         BookingDtoOutForItem bookingDtoOutForItem = BookingDtoOutForItem.builder()
@@ -42,16 +66,6 @@ public class BookingMapper {
         return bookingDtoOutForItem;
     }
 
-    public List<BookingDtoOut> toBookingsDto(List<Booking> bookings) {
-        List<BookingDtoOut> bookingDtoOuts = bookings
-                .stream()
-                .map(BookingMapper::toBookingDto)
-                .collect(Collectors.toList());
-
-        log.info("🔀 список bookings: " + bookings + " сконвертирован в getBookingDtos: " + bookingDtoOuts);
-        return bookingDtoOuts;
-    }
-
 
     public Booking toBooking(BookingDtoIn bookingDtoIn) {
         Booking booking = Booking.builder()
@@ -64,13 +78,13 @@ public class BookingMapper {
         return booking;
     }
 
-    public List<Booking> toBookings(List<BookingDtoIn> giveBookingsDto) {
-        List<Booking> bookings = giveBookingsDto
+    public List<Booking> toBookings(List<BookingDtoIn> bookingsDtoIn) {
+        List<Booking> bookings = bookingsDtoIn
                 .stream()
                 .map(BookingMapper::toBooking)
                 .collect(Collectors.toList());
 
-        log.info("🔀 список giveBookingsDto: " + giveBookingsDto + " сконвертирован в bookings: " + bookings);
+        log.info("🔀 список bookingsDtoIn: " + bookingsDtoIn + " сконвертирован в bookings: " + bookings);
         return bookings;
     }
 }
