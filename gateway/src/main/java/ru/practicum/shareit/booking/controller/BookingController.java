@@ -12,9 +12,9 @@ import ru.practicum.shareit.booking.dto.BookingDtoIn;
 import ru.practicum.shareit.booking.dto.CreateValidation;
 import ru.practicum.shareit.booking.constant.State;
 import ru.practicum.shareit.booking.exception.BookingUnsupportedState;
+import ru.practicum.shareit.constant.RequestHeaders;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
 @Slf4j
@@ -24,35 +24,34 @@ import javax.validation.constraints.PositiveOrZero;
 @Controller
 public class BookingController {
     private final BookingClient bookingClient;
-    private static final String requestHeaderUserId = "X-Sharer-User-Id";
 
     @PostMapping
-    public ResponseEntity<Object> create(@RequestHeader(requestHeaderUserId) @Positive @Min(1) long userId,
+    public ResponseEntity<Object> create(@RequestHeader(RequestHeaders.userId) @Min(1) long userId,
                                          @RequestBody @Validated(CreateValidation.class) BookingDtoIn bookingDtoIn) {
         log.info("🟫🟫 POST /bookings");
         return bookingClient.create(userId, bookingDtoIn);
     }
 
     @PatchMapping("/{bookingId}")
-    public ResponseEntity<Object> updateStatus(@RequestHeader(requestHeaderUserId) @Positive @Min(1) long ownerId,
-                                               @PathVariable(name = "bookingId") @Positive @Min(1) long bookingId,
+    public ResponseEntity<Object> updateStatus(@RequestHeader(RequestHeaders.userId) @Min(1) long ownerId,
+                                               @PathVariable(name = "bookingId") @Min(1) long bookingId,
                                                @RequestParam(name = "approved") boolean isApproval) {
         log.info("🟫🟫 PATCH /bookings/{}?approved={}", bookingId, isApproval);
         return bookingClient.updateStatus(ownerId, bookingId, isApproval);
     }
 
     @GetMapping("/{bookingId}")
-    public ResponseEntity<Object> getByIdAndOwnerOrBookerId(@RequestHeader(requestHeaderUserId) @Positive @Min(1) long ownerOrBookerId,
+    public ResponseEntity<Object> getByIdAndOwnerOrBookerId(@RequestHeader(RequestHeaders.userId) @Min(1) long ownerOrBookerId,
                                                             @PathVariable long bookingId) {
         log.info("🟫🟫 GET /bookings/{}", bookingId);
         return bookingClient.getByIdAndOwnerOrBookerId(ownerOrBookerId, bookingId);
     }
 
     @GetMapping
-    public ResponseEntity<Object> getAllByBookerId(@RequestHeader(requestHeaderUserId) @Positive @Min(1) long bookerId,
+    public ResponseEntity<Object> getAllByBookerId(@RequestHeader(RequestHeaders.userId) @Min(1) long bookerId,
                                                    @RequestParam(name = "state", defaultValue = "ALL") String stateParam,
                                                    @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-                                                   @RequestParam(defaultValue = "10") @Positive @Min(1) int size) {
+                                                   @RequestParam(defaultValue = "10") @Min(1) int size) {
         log.info("🟫🟫 запрос от бронирующего: GET /bookings?state={}&from={}&size={}", stateParam, from, size);
 
         State state = State.from(stateParam)
@@ -61,10 +60,10 @@ public class BookingController {
     }
 
     @GetMapping("/owner")
-    public ResponseEntity<Object> getAllByOwnerId(@RequestHeader(requestHeaderUserId) @Positive @Min(1) long ownerId,
+    public ResponseEntity<Object> getAllByOwnerId(@RequestHeader(RequestHeaders.userId) @Min(1) long ownerId,
                                                   @RequestParam(name = "state", defaultValue = "ALL") String stateParam,
                                                   @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-                                                  @RequestParam(defaultValue = "10") @Positive @Min(1) int size) {
+                                                  @RequestParam(defaultValue = "10") @Min(1) int size) {
         log.info("🟫🟫 запрос от владельца: GET /bookings?state={}&from={}&size={}", stateParam, from, size);
 
         State state = State.from(stateParam)

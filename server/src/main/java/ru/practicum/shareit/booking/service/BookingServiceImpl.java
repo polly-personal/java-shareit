@@ -139,7 +139,7 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findAllByBookerIdAndStatusEquals(bookerId, Status.REJECTED, pageRequest);
                 break;
             default:
-                throw new BookingUnsupportedState("Unknown state: UNSUPPORTED_STATUS"); //todo убрать?
+                throw new BookingUnsupportedState("Unknown state: UNSUPPORTED_STATUS");
         }
 
         log.info("🟦 выдан список бронирований: " + bookings);

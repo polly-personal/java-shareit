@@ -12,7 +12,6 @@ import ru.practicum.shareit.user.dto.UpdateValidation;
 import ru.practicum.shareit.user.dto.UserDtoIn;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.Positive;
 
 /**
  * TODO Sprint add-controllers.
@@ -34,20 +33,20 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    public ResponseEntity<Object> updateById(@PathVariable(name = "userId") @Positive @Min(1) long id,
+    public ResponseEntity<Object> updateById(@PathVariable(name = "userId") @Min(1) long id,
                                              @Validated(UpdateValidation.class) @RequestBody UserDtoIn updatedUserDtoIn) {
         log.info("🟫🟫 PATCH /users/{}", id);
         return userClient.updateById(id, updatedUserDtoIn);
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Object> deleteById(@PathVariable(name = "userId") @Positive @Min(1) long id) {
+    public ResponseEntity<Object> deleteById(@PathVariable(name = "userId") @Min(1) long id) {
         log.info("🟫🟫 DELETE /users/{}", id);
         return userClient.deleteById(id);
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<Object> getById(@PathVariable(name = "userId") @Positive @Min(1) long id) {
+    public ResponseEntity<Object> getById(@PathVariable(name = "userId") @Min(1) long id) {
         log.info("🟫🟫 GET /users/{}", id);
         return userClient.getById(id);
     }
